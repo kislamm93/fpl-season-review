@@ -1,12 +1,41 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from "react";
+import DashboardHeader from "@/components/DashboardHeader";
+import ManagerIdForm from "@/components/ManagerIdForm";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
+      <DashboardHeader />
+      
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pb-16">
+        <div className="w-full max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 gap-8">
+            <div className="text-center mb-6 opacity-0 animate-fade-in" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
+              <div className="inline-block mb-2 px-3 py-1 bg-primary/5 text-primary-foreground/80 rounded-full text-xs font-medium">
+                Welcome to FPL Dashboard
+              </div>
+              <h2 className="text-3xl font-medium tracking-tight sm:text-4xl mb-3">
+                Track Your Fantasy Premier League
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Get detailed insights and performance tracking for your Fantasy Premier League team.
+                Start by entering your FPL manager ID below.
+              </p>
+            </div>
+            
+            <div className="opacity-0 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+              <ManagerIdForm />
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <footer className="py-6 text-center text-sm text-muted-foreground">
+        <p className="opacity-0 animate-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
+          FPL Dashboard — Elegantly track your Fantasy Premier League performance
+        </p>
+      </footer>
     </div>
   );
 };
