@@ -34,7 +34,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ className }) => {
               </div>
             </div>
             <div>
-              <h1 className="text-xl font-medium tracking-tight">FPL Dashboard</h1>
+              <h1 className="text-xl font-medium tracking-tight">FPL Season Review</h1>
               <p className="text-sm text-muted-foreground">Fantasy Premier League Manager</p>
             </div>
           </div>
