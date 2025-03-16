@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { History } from "lucide-react";
 import {
   Sidebar,
@@ -11,13 +11,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 
 interface AppSidebarProps {
   managerId: string | null;
 }
 
 const AppSidebar = ({ managerId }: AppSidebarProps) => {
+  // If there's no manager ID, don't render the sidebar at all
+  if (!managerId) {
+    return null;
+  }
+
   return (
     <Sidebar collapsible="none">
       <SidebarContent>
@@ -25,16 +29,14 @@ const AppSidebar = ({ managerId }: AppSidebarProps) => {
           <SidebarGroupLabel>Manager Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {managerId && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild tooltip="Manager History">
-                    <a href="/manager-history">
-                      <History />
-                      <span>Manager History</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Manager History">
+                  <a href="/manager-history">
+                    <History />
+                    <span>Manager History</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

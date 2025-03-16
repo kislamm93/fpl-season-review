@@ -21,16 +21,27 @@ const App = () => {
     const storedId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
     setManagerId(storedId);
     
-    // Add event listener for storage changes
-    const handleStorageChange = () => {
-      const updatedId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
-      setManagerId(updatedId);
+    // Add event listener for storage changes in other tabs
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEYS.MANAGER_ID) {
+        const updatedId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
+        setManagerId(updatedId);
+      }
     };
     
     window.addEventListener('storage', handleStorageChange);
     
+    // Create a custom event listener for same-tab changes
+    const handleCustomStorageChange = () => {
+      const updatedId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
+      setManagerId(updatedId);
+    };
+    
+    window.addEventListener('local-storage-change', handleCustomStorageChange);
+    
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('local-storage-change', handleCustomStorageChange);
     };
   }, []);
 

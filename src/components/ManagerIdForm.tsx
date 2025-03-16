@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { STORAGE_KEYS, getFromLocalStorage, saveToLocalStorage } from "@/lib/localStorage";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,9 @@ const ManagerIdForm: React.FC<ManagerIdFormProps> = ({ className, onManagerIdCha
         duration: 4000,
       });
       
+      // Dispatch custom event for same-tab detection
+      window.dispatchEvent(new Event('local-storage-change'));
+      
       // Notify parent component about the manager ID change
       if (onManagerIdChange) {
         onManagerIdChange();
@@ -84,6 +88,9 @@ const ManagerIdForm: React.FC<ManagerIdFormProps> = ({ className, onManagerIdCha
     toast("Manager ID has been reset", {
       description: "You can enter a new manager ID now.",
     });
+    
+    // Dispatch custom event for same-tab detection
+    window.dispatchEvent(new Event('local-storage-change'));
     
     // Notify parent component about the manager ID change
     if (onManagerIdChange) {
