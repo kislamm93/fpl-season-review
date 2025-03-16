@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 import ManagerIdForm from "@/components/ManagerIdForm";
 import PlayersList from "@/components/PlayersList";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import AppSidebar from "@/components/AppSidebar";
 
 const Dashboard = () => {
   const [managerId, setManagerId] = useState<string | null>(null);
@@ -32,17 +33,23 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8">
-      <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
-        <ManagerIdForm onManagerIdChange={handleManagerIdChange} />
-      </div>
-      
-      {managerId && (
-        <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <PlayersList />
+    <SidebarProvider>
+      <div className="flex w-full gap-4">
+        <AppSidebar managerId={managerId} />
+        
+        <div className="flex-1 grid grid-cols-1 gap-8">
+          <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <ManagerIdForm onManagerIdChange={handleManagerIdChange} />
+          </div>
+          
+          {managerId && (
+            <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+              <PlayersList />
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
 

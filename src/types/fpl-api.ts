@@ -43,3 +43,28 @@ export interface FplBootstrapResponse {
   teams: FplTeam[];
   element_types: FplPosition[];
 }
+
+export interface FplGameweekHistory {
+  event: number; // Gameweek number
+  points: number;
+  total_points: number;
+  rank: number;
+  rank_sort: number;
+  overall_rank: number;
+  bank: number;
+  value: number;
+  event_transfers: number;
+  event_transfers_cost: number;
+  points_on_bench: number;
+}
+
+export interface FplCurrentSeason {
+  current: FplGameweekHistory[];
+  past: any[];
+}
+
+export interface FplManagerHistory {
+  current: FplGameweekHistory[];
+  past: any[];
+  chips: any[];
+}
