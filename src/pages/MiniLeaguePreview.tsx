@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useManagerLeagues } from "@/hooks/useManagerLeagues";
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,8 +9,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowUp, ArrowDown } from "lucide-react";
 
 const MiniLeaguePreview = () => {
+  const navigate = useNavigate();
   const managerId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
   const { leagues, isLoading, error } = useManagerLeagues(managerId);
+
+  const handleLeagueClick = (leagueId: number) => {
+    navigate(`/league/${leagueId}`);
+  };
 
   if (!managerId) {
     return (
@@ -95,7 +101,6 @@ const MiniLeaguePreview = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>League Name</TableHead>
-                <TableHead>League ID</TableHead>
                 <TableHead>Current Rank</TableHead>
                 <TableHead>Previous Rank</TableHead>
                 <TableHead>Trend</TableHead>
@@ -111,9 +116,12 @@ const MiniLeaguePreview = () => {
                 }
 
                 return (
-                  <TableRow key={`${league.league_type}-${league.id}`}>
+                  <TableRow 
+                    key={`${league.league_type}-${league.id}`}
+                    onClick={() => handleLeagueClick(league.id)}
+                    className="cursor-pointer hover:bg-muted"
+                  >
                     <TableCell className="font-medium">{league.name}</TableCell>
-                    <TableCell>{league.id}</TableCell>
                     <TableCell>{league.entry_rank || "N/A"}</TableCell>
                     <TableCell>{league.entry_last_rank || "N/A"}</TableCell>
                     <TableCell>
