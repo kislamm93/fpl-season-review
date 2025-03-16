@@ -7,7 +7,7 @@ import { FplLeagueStandings, FplManagerLeagues } from "@/types/fpl-api";
  */
 export const fetchManagerLeagues = async (managerId: string): Promise<FplManagerLeagues> => {
   try {
-    // Updated endpoint to match the correct API path structure
+    // Correct endpoint that returns manager data including leagues
     const response = await fetch(getApiEndpoint(`/entry/${managerId}`));
     
     if (!response.ok) {
@@ -15,7 +15,13 @@ export const fetchManagerLeagues = async (managerId: string): Promise<FplManager
     }
     
     const data = await response.json();
-    return data as FplManagerLeagues;
+    
+    // Extract the leagues object from the response
+    if (data.leagues) {
+      return data.leagues as FplManagerLeagues;
+    } else {
+      throw new Error("Leagues data not found in response");
+    }
   } catch (error) {
     console.error("Error fetching manager leagues:", error);
     throw error;
