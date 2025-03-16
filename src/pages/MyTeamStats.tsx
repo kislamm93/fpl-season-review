@@ -54,6 +54,8 @@ const MyTeamStats = () => {
                   <TableRow>
                     <TableHead>Player</TableHead>
                     <TableHead className="text-right">Points</TableHead>
+                    <TableHead className="text-right">PPG</TableHead>
+                    <TableHead className="text-right">Selected</TableHead>
                     <TableHead className="text-right">Goals</TableHead>
                     <TableHead className="text-right">Assists</TableHead>
                     <TableHead className="text-right">Clean Sheets</TableHead>
@@ -70,8 +72,10 @@ const MyTeamStats = () => {
                 <TableBody>
                   {teamStats?.map((player, index) => (
                     <TableRow key={index}>
-                      <TableCell className="font-medium">{player.player_name}</TableCell>
+                      <TableCell className="font-medium">{player.web_name || player.player_name}</TableCell>
                       <TableCell className="text-right">{player.total_points}</TableCell>
+                      <TableCell className="text-right">{player.points_per_game}</TableCell>
+                      <TableCell className="text-right">{player.selected_by_percent}%</TableCell>
                       <TableCell className="text-right">{player.goals_scored}</TableCell>
                       <TableCell className="text-right">{player.assists}</TableCell>
                       <TableCell className="text-right">{player.clean_sheets}</TableCell>

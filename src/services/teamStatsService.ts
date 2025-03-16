@@ -1,4 +1,3 @@
-
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 
 export interface TeamStats {
@@ -15,6 +14,11 @@ export interface TeamStats {
   expected_assists: string;
   expected_goal_involvements: string;
   expected_goals_conceded: string;
+  web_name: string;
+  team: number;
+  team_code: number;
+  points_per_game: string;
+  selected_by_percent: string;
 }
 
 export interface TeamStatsResponse {
@@ -35,17 +39,18 @@ export interface TeamStatsResponse {
       expected_assists: string;
       expected_goal_involvements: string;
       expected_goals_conceded: string;
-      // ... other stat fields available in the API
     };
-    // other fields available in the API
+    web_name: string;
+    team: number;
+    team_code: number;
+    points_per_game: string;
+    selected_by_percent: string;
   }>;
 }
 
 export const transformTeamStatsResponse = (response: TeamStatsResponse): TeamStats[] => {
-  // Extract player details from bootstrap-static API based on player IDs
-  // For now, create basic stats with available data
   return response.team_stats.map(player => ({
-    player_name: `Player ${player.id}`, // Replace with actual player name when available
+    player_name: player.web_name || `Player ${player.id}`,
     total_points: player.stats.total_points,
     goals_scored: player.stats.goals_scored,
     assists: player.stats.assists,
@@ -57,7 +62,12 @@ export const transformTeamStatsResponse = (response: TeamStatsResponse): TeamSta
     expected_goals: player.stats.expected_goals,
     expected_assists: player.stats.expected_assists,
     expected_goal_involvements: player.stats.expected_goal_involvements,
-    expected_goals_conceded: player.stats.expected_goals_conceded
+    expected_goals_conceded: player.stats.expected_goals_conceded,
+    web_name: player.web_name,
+    team: player.team,
+    team_code: player.team_code,
+    points_per_game: player.points_per_game,
+    selected_by_percent: player.selected_by_percent
   }));
 };
 
