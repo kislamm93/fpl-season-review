@@ -32,14 +32,18 @@ const ManagerHistory = () => {
   
   const { gameweeks, isLoading, error } = useManagerHistory(managerId);
   
-  const chartData = gameweeks.map(gw => ({
+  const pointsChartData = gameweeks.map(gw => ({
     gameweek: `GW ${gw.event}`,
     points: gw.points,
     totalPoints: gw.total_points,
+  }));
+
+  const rankChartData = gameweeks.map(gw => ({
+    gameweek: `GW ${gw.event}`,
     rank: gw.overall_rank,
   }));
   
-  const config = {
+  const pointsConfig = {
     points: {
       label: "Gameweek Points",
       color: "#10b981", // green-500
@@ -48,6 +52,9 @@ const ManagerHistory = () => {
       label: "Total Points",
       color: "#6366f1", // indigo-500
     },
+  };
+
+  const rankConfig = {
     rank: {
       label: "Overall Rank",
       color: "#9b87f5", // purple
@@ -72,77 +79,123 @@ const ManagerHistory = () => {
       </header>
       
       <main className="flex-1 container max-w-screen-2xl py-6">
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Gameweek Performance</CardTitle>
-            <CardDescription>
-              Track your points performance across gameweeks
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="w-full aspect-video">
-                <Skeleton className="w-full h-full" />
-              </div>
-            ) : error ? (
-              <div className="text-center py-8 text-destructive">
-                Error loading manager history data
-              </div>
-            ) : gameweeks.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No gameweek data available for this manager
-              </div>
-            ) : (
-              <ChartContainer className="aspect-video" config={config}>
-                <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="gameweek" />
-                  <YAxis yAxisId="left" orientation="left" />
-                  <YAxis 
-                    yAxisId="right" 
-                    orientation="right" 
-                    domain={['auto', 'auto']}
-                    reversed={true} // Reverse the axis since lower rank is better
-                  />
-                  <Tooltip content={<ChartTooltipContent />} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="points" 
-                    stroke="var(--color-points)" 
-                    strokeWidth={2} 
-                    dot={{ strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6 }}
-                    name="Gameweek Points"
-                    yAxisId="left"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="totalPoints" 
-                    stroke="var(--color-totalPoints)" 
-                    strokeWidth={2} 
-                    dot={{ strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6 }}
-                    name="Total Points"
-                    yAxisId="left"
-                  />
-                  <Legend content={<ChartLegendContent />} />
-                </LineChart>
-              </ChartContainer>
-            )}
-            <div className="mt-4 flex justify-center">
-              <div className="flex gap-6">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-[#10b981]"></div>
-                  <span className="text-sm">Gameweek Points</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Points Performance</CardTitle>
+              <CardDescription>
+                Track your points across gameweeks
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="w-full aspect-video">
+                  <Skeleton className="w-full h-full" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-[#6366f1]"></div>
-                  <span className="text-sm">Total Points</span>
+              ) : error ? (
+                <div className="text-center py-8 text-destructive">
+                  Error loading manager history data
+                </div>
+              ) : gameweeks.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No gameweek data available for this manager
+                </div>
+              ) : (
+                <ChartContainer className="aspect-video" config={pointsConfig}>
+                  <LineChart data={pointsChartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="gameweek" />
+                    <YAxis />
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="points" 
+                      stroke="var(--color-points)" 
+                      strokeWidth={2} 
+                      dot={{ strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="Gameweek Points"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="totalPoints" 
+                      stroke="var(--color-totalPoints)" 
+                      strokeWidth={2} 
+                      dot={{ strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="Total Points"
+                    />
+                    <Legend content={<ChartLegendContent />} />
+                  </LineChart>
+                </ChartContainer>
+              )}
+              <div className="mt-4 flex justify-center">
+                <div className="flex gap-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-[#10b981]"></div>
+                    <span className="text-sm">Gameweek Points</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-[#6366f1]"></div>
+                    <span className="text-sm">Total Points</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Overall Rank</CardTitle>
+              <CardDescription>
+                Track your rank position across gameweeks
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="w-full aspect-video">
+                  <Skeleton className="w-full h-full" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-8 text-destructive">
+                  Error loading manager history data
+                </div>
+              ) : gameweeks.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No gameweek data available for this manager
+                </div>
+              ) : (
+                <ChartContainer className="aspect-video" config={rankConfig}>
+                  <LineChart data={rankChartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="gameweek" />
+                    <YAxis 
+                      reversed={true} // Reverse the axis since lower rank is better
+                      tickFormatter={(value) => value.toLocaleString()}
+                    />
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="rank" 
+                      stroke="var(--color-rank)" 
+                      strokeWidth={2} 
+                      dot={{ strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="Overall Rank"
+                    />
+                    <Legend content={<ChartLegendContent />} />
+                  </LineChart>
+                </ChartContainer>
+              )}
+              <div className="mt-4 flex justify-center">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#9b87f5]"></div>
+                  <span className="text-sm">Overall Rank (lower is better)</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         <Card>
           <CardHeader>
