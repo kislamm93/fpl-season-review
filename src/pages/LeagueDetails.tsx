@@ -1,12 +1,90 @@
 
 import React from "react";
 import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { fetchLeagueStandings } from "@/services/leagueService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const LeagueDetails = () => {
   const { leagueId } = useParams<{ leagueId: string }>();
+  
+  const { data: leagueData, isLoading, error } = useQuery({
+    queryKey: ["league-standings", leagueId],
+    queryFn: () => fetchLeagueStandings(Number(leagueId)),
+    enabled: !!leagueId,
+  });
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="space-y-4">
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-96 w-full" />
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-destructive">
+              Error loading league data. Please try again later.
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (!leagueData) {
+      return (
+        <Card>
+          <CardContent className="pt-6">
+            <div>No league data available.</div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>{leagueData.league.name}</CardTitle>
+            <CardDescription>
+              {leagueData.league.league_type === "c" ? "Classic" : "Head-to-Head"} League
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Rank</TableHead>
+                  <TableHead>Team</TableHead>
+                  <TableHead>Manager</TableHead>
+                  <TableHead className="text-right">Points</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {leagueData.standings.results.map((entry) => (
+                  <TableRow key={entry.entry}>
+                    <TableCell>{entry.rank}</TableCell>
+                    <TableCell className="font-medium">{entry.entry_name}</TableCell>
+                    <TableCell>{entry.player_name}</TableCell>
+                    <TableCell className="text-right">{entry.total}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -18,19 +96,11 @@ const LeagueDetails = () => {
           </Button>
         </Link>
       </div>
-      <h1 className="text-2xl font-bold mb-4">League Details</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        {isLoading ? "Loading league..." : leagueData ? leagueData.league.name : "League Details"}
+      </h1>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>League ID: {leagueId}</CardTitle>
-          <CardDescription>
-            You are viewing the details for this league.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>This page will be populated with league details in a future update.</p>
-        </CardContent>
-      </Card>
+      {renderContent()}
     </div>
   );
 };
