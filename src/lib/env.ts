@@ -14,5 +14,13 @@ export const getApiBaseUrl = (): string => {
 };
 
 export const getApiEndpoint = (endpoint: string): string => {
-  return `${getApiBaseUrl()}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  // Remove the /api prefix if it's included in the endpoint for development environment
+  const isDevelopment = import.meta.env.DEV;
+  let formattedEndpoint = endpoint;
+  
+  if (isDevelopment && endpoint.startsWith('/api/')) {
+    formattedEndpoint = endpoint.replace('/api', '');
+  }
+  
+  return `${getApiBaseUrl()}${formattedEndpoint.startsWith('/') ? formattedEndpoint : `/${formattedEndpoint}`}`;
 };

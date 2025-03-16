@@ -7,7 +7,8 @@ import { FplLeagueStandings, FplManagerLeagues } from "@/types/fpl-api";
  */
 export const fetchManagerLeagues = async (managerId: string): Promise<FplManagerLeagues> => {
   try {
-    const response = await fetch(getApiEndpoint(`/entry/${managerId}/leagues`));
+    // Updated endpoint to match the correct API path structure
+    const response = await fetch(getApiEndpoint(`/api/entry/${managerId}/leagues`));
     
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
