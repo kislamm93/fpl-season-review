@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueStandings } from "@/services/leagueService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -17,6 +17,10 @@ const LeagueDetails = () => {
     queryFn: () => fetchLeagueStandings(Number(leagueId)),
     enabled: !!leagueId,
   });
+
+  const handleRowClick = (entryId: number) => {
+    window.open(`https://fantasy.premierleague.com/entry/${entryId}/history`, '_blank');
+  };
 
   const renderContent = () => {
     if (isLoading) {
@@ -70,9 +74,18 @@ const LeagueDetails = () => {
                   const rankChange = entry.last_rank - entry.rank;
                   
                   return (
-                    <TableRow key={entry.entry}>
+                    <TableRow 
+                      key={entry.entry}
+                      onClick={() => handleRowClick(entry.entry)}
+                      className="cursor-pointer hover:bg-accent/50 transition-colors"
+                    >
                       <TableCell>{entry.rank}</TableCell>
-                      <TableCell className="font-medium">{entry.entry_name}</TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-1">
+                          {entry.entry_name}
+                          <ExternalLink size={14} className="text-muted-foreground" />
+                        </div>
+                      </TableCell>
                       <TableCell>{entry.player_name}</TableCell>
                       <TableCell>{entry.last_rank}</TableCell>
                       <TableCell>
