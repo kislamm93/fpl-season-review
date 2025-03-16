@@ -1,6 +1,6 @@
 
 import React from "react";
-import { History, LayoutDashboard, Trophy } from "lucide-react";
+import { BarChart, History, LayoutDashboard, Trophy } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -34,6 +34,14 @@ const AppSidebar = ({ managerId }: AppSidebarProps) => {
                   <a href="/">
                     <LayoutDashboard />
                     <span>Dashboard</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="My Team Stats">
+                  <a href="/my-team-stats">
+                    <BarChart />
+                    <span>My Team Stats</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
