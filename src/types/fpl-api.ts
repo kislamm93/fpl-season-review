@@ -1,4 +1,3 @@
-
 export interface FplPlayer {
   id: number;
   first_name: string;
@@ -48,14 +47,26 @@ export interface FplGameweekHistory {
   event: number; // Gameweek number
   points: number;
   total_points: number;
-  rank: number;
-  rank_sort: number;
+  rank?: number;
+  rank_sort?: number;
   overall_rank: number;
-  bank: number;
-  value: number;
-  event_transfers: number;
-  event_transfers_cost: number;
-  points_on_bench: number;
+  bank?: number;
+  value?: number;
+  event_transfers?: number;
+  event_transfers_cost?: number;
+  points_on_bench?: number;
+}
+
+export interface FplRankHistory {
+  event: number;
+  total_points: number;
+  overall_rank: number;
+}
+
+export interface FplChip {
+  name: string;
+  time: string;
+  event: number;
 }
 
 export interface FplCurrentSeason {
@@ -69,7 +80,13 @@ export interface FplManagerHistory {
   chips: any[];
 }
 
-// League related types
+export interface FplLeagueParticipant {
+  manager_id: number;
+  player_name: string;
+  rank_history: FplRankHistory[];
+  chips?: FplChip[];
+}
+
 export interface FplLeague {
   id: number;
   name: string;

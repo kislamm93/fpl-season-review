@@ -1,6 +1,5 @@
-
 import { getApiEndpoint } from "@/lib/env";
-import { FplLeagueStandings, FplManagerLeagues } from "@/types/fpl-api";
+import { FplLeagueStandings, FplManagerLeagues, FplLeagueParticipant } from "@/types/fpl-api";
 
 /**
  * Fetches the leagues a manager is participating in
@@ -66,9 +65,7 @@ export const fetchLeagueParticipants = async (leagueId: number) => {
         entry_id: participant.manager_id,
         player_name: participant.player_name,
         team_name: participant.player_name, // Using player_name as team_name if not available
-        history: participant.history && Array.isArray(participant.history.current) 
-          ? participant.history.current 
-          : []
+        history: participant.rank_history || []
       }));
     }
     

@@ -8,9 +8,9 @@ import { generateRandomColor } from "@/lib/utils";
 
 type ParticipantHistory = {
   event: number;
-  rank: number;
   total_points: number;
-  points: number;
+  overall_rank: number;
+  rank?: number;
 };
 
 type Participant = {
@@ -54,9 +54,9 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
         if (Array.isArray(participant.history)) {
           const gwHistory = participant.history.find(history => history && history.event === gw);
           if (gwHistory) {
-            // Use overall_rank instead of rank if dealing with manager history
-            const rankValue = gwHistory.rank || gwHistory.overall_rank;
-            if (rankValue) {
+            // Use rank if available, otherwise use overall_rank
+            const rankValue = gwHistory.rank !== undefined ? gwHistory.rank : gwHistory.overall_rank;
+            if (rankValue !== undefined) {
               dataPoint[participant.player_name] = rankValue;
             }
           }
