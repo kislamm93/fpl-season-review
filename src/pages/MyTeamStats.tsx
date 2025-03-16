@@ -25,6 +25,13 @@ const MyTeamStats = () => {
     }
   }, [error]);
 
+  // Log data to console for debugging
+  React.useEffect(() => {
+    if (teamStats) {
+      console.log("Team stats received:", teamStats);
+    }
+  }, [teamStats]);
+
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-6">My Team Stats</h1>
