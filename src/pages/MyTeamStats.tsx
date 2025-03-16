@@ -53,7 +53,6 @@ const MyTeamStats = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Player</TableHead>
-                    <TableHead>Position</TableHead>
                     <TableHead className="text-right">Points</TableHead>
                     <TableHead className="text-right">Goals</TableHead>
                     <TableHead className="text-right">Assists</TableHead>
@@ -62,14 +61,15 @@ const MyTeamStats = () => {
                     <TableHead className="text-right">Yellow Cards</TableHead>
                     <TableHead className="text-right">Red Cards</TableHead>
                     <TableHead className="text-right">Bonus</TableHead>
-                    <TableHead className="text-right">Cost (£m)</TableHead>
+                    <TableHead className="text-right">xG</TableHead>
+                    <TableHead className="text-right">xA</TableHead>
+                    <TableHead className="text-right">xGC</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {teamStats?.map((player, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{player.player_name}</TableCell>
-                      <TableCell>{player.position}</TableCell>
                       <TableCell className="text-right">{player.total_points}</TableCell>
                       <TableCell className="text-right">{player.goals_scored}</TableCell>
                       <TableCell className="text-right">{player.assists}</TableCell>
@@ -78,7 +78,9 @@ const MyTeamStats = () => {
                       <TableCell className="text-right">{player.yellow_cards}</TableCell>
                       <TableCell className="text-right">{player.red_cards}</TableCell>
                       <TableCell className="text-right">{player.bonus}</TableCell>
-                      <TableCell className="text-right">{(player.cost / 10).toFixed(1)}</TableCell>
+                      <TableCell className="text-right">{player.expected_goals}</TableCell>
+                      <TableCell className="text-right">{player.expected_assists}</TableCell>
+                      <TableCell className="text-right">{player.expected_goals_conceded}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

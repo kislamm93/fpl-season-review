@@ -2,7 +2,6 @@ import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 
 export interface TeamStats {
   player_name: string;
-  position: string;
   total_points: number;
   goals_scored: number;
   assists: number;
@@ -11,7 +10,9 @@ export interface TeamStats {
   yellow_cards: number;
   red_cards: number;
   bonus: number;
-  cost: number;
+  expected_goals: string;
+  expected_assists: string;
+  expected_goals_conceded: string;
 }
 
 export interface TeamStatsResponse {
@@ -28,6 +29,9 @@ export interface TeamStatsResponse {
       red_cards: number;
       bonus: number;
       total_points: number;
+      expected_goals: string;
+      expected_assists: string;
+      expected_goals_conceded: string;
       // ... other stat fields available in the API
     };
     // other fields available in the API
@@ -39,7 +43,6 @@ export const transformTeamStatsResponse = (response: TeamStatsResponse): TeamSta
   // For now, create basic stats with available data
   return response.team_stats.map(player => ({
     player_name: `Player ${player.id}`, // Replace with actual player name when available
-    position: "Unknown", // Replace with actual position when available
     total_points: player.stats.total_points,
     goals_scored: player.stats.goals_scored,
     assists: player.stats.assists,
@@ -48,7 +51,9 @@ export const transformTeamStatsResponse = (response: TeamStatsResponse): TeamSta
     yellow_cards: player.stats.yellow_cards,
     red_cards: player.stats.red_cards,
     bonus: player.stats.bonus,
-    cost: 0 // Replace with actual cost when available
+    expected_goals: player.stats.expected_goals,
+    expected_assists: player.stats.expected_assists,
+    expected_goals_conceded: player.stats.expected_goals_conceded
   }));
 };
 
