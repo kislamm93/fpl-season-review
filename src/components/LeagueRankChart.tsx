@@ -81,10 +81,12 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
   React.useEffect(() => {
     if (data) {
       const initialVisibility: Record<string, boolean> = {};
-      data.forEach(participant => {
-        // Initially show all participants
-        initialVisibility[participant.player_name] = true;
+      
+      // Show only first 5 participants by default
+      data.forEach((participant, index) => {
+        initialVisibility[participant.player_name] = index < 5;
       });
+      
       setVisibleParticipants(initialVisibility);
     }
   }, [data]);
