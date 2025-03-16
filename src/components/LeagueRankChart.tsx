@@ -38,7 +38,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     const colors: Record<string, string> = {};
     data.forEach(participant => {
       // Generate a consistent color based on the player name
-      colors[participant.player_name] = generateRandomColor();
+      colors[participant.player_name] = generateRandomColor(participant.player_name);
     });
     
     return colors;
@@ -73,7 +73,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     
     const sortedGameweeks = Array.from(allGameweeks).sort((a, b) => a - b);
     
-    // Create data points for each gameweek with all participants' ranks
+    // Create data points for each gameweek with all participants' total points
     return sortedGameweeks.map(gw => {
       const dataPoint: Record<string, any> = {
         gameweek: `GW${gw}`,
@@ -82,12 +82,8 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
       data.forEach(participant => {
         if (Array.isArray(participant.history)) {
           const gwHistory = participant.history.find(history => history && history.event === gw);
-          if (gwHistory) {
-            // Use rank if available, otherwise use overall_rank
-            const rankValue = gwHistory.rank !== undefined ? gwHistory.rank : gwHistory.overall_rank;
-            if (rankValue !== undefined) {
-              dataPoint[participant.player_name] = rankValue;
-            }
+          if (gwHistory && gwHistory.total_points !== undefined) {
+            dataPoint[participant.player_name] = gwHistory.total_points;
           }
         }
       });
@@ -123,7 +119,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     return (
       <Card>
         <CardHeader>
-          <CardTitle>League Rank History</CardTitle>
+          <CardTitle>League Points History</CardTitle>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-[400px] w-full" />
@@ -136,11 +132,11 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     return (
       <Card>
         <CardHeader>
-          <CardTitle>League Rank History</CardTitle>
+          <CardTitle>League Points History</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-destructive">
-            Error loading rank history data. Please try again later.
+            Error loading points history data. Please try again later.
           </div>
         </CardContent>
       </Card>
@@ -151,10 +147,10 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     return (
       <Card>
         <CardHeader>
-          <CardTitle>League Rank History</CardTitle>
+          <CardTitle>League Points History</CardTitle>
         </CardHeader>
         <CardContent>
-          <div>No rank history data available.</div>
+          <div>No points history data available.</div>
         </CardContent>
       </Card>
     );
@@ -163,7 +159,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
   return (
     <Card>
       <CardHeader>
-        <CardTitle>League Rank History</CardTitle>
+        <CardTitle>League Points History</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Manager selector badges */}
@@ -191,7 +187,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
             <LineChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 30 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="gameweek" />
-              <YAxis reversed />
+              <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Legend />
               {data.map((participant) => (
