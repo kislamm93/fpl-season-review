@@ -2,7 +2,7 @@
 import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchLeagueStandings } from "@/services/leagueService";
+import { fetchLeagueStandings, fetchLeagueParticipants } from "@/services/leagueService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink, Eye } from "lucide-react";
@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { STORAGE_KEYS, saveToLocalStorage } from "@/lib/localStorage";
 import { toast } from "@/components/ui/use-toast";
+import LeagueRankChart from "@/components/LeagueRankChart";
 
 const LeagueDetails = () => {
   const { leagueId } = useParams<{ leagueId: string }>();
@@ -18,6 +19,16 @@ const LeagueDetails = () => {
   const { data: leagueData, isLoading, error } = useQuery({
     queryKey: ["league-standings", leagueId],
     queryFn: () => fetchLeagueStandings(Number(leagueId)),
+    enabled: !!leagueId,
+  });
+
+  const { 
+    data: participantsData, 
+    isLoading: isParticipantsLoading, 
+    error: participantsError
+  } = useQuery({
+    queryKey: ["league-participants", leagueId],
+    queryFn: () => fetchLeagueParticipants(Number(leagueId)),
     enabled: !!leagueId,
   });
 
@@ -160,6 +171,14 @@ const LeagueDetails = () => {
       </h1>
       
       {renderContent()}
+      
+      <div className="mt-8">
+        <LeagueRankChart 
+          data={participantsData} 
+          isLoading={isParticipantsLoading} 
+          error={participantsError as Error | null} 
+        />
+      </div>
     </div>
   );
 };

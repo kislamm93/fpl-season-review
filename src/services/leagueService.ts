@@ -1,4 +1,3 @@
-
 import { getApiEndpoint } from "@/lib/env";
 import { FplLeagueStandings, FplManagerLeagues } from "@/types/fpl-api";
 
@@ -7,7 +6,6 @@ import { FplLeagueStandings, FplManagerLeagues } from "@/types/fpl-api";
  */
 export const fetchManagerLeagues = async (managerId: string): Promise<FplManagerLeagues> => {
   try {
-    // Correct endpoint that returns manager data including leagues
     const response = await fetch(getApiEndpoint(`/entry/${managerId}`));
     
     if (!response.ok) {
@@ -16,7 +14,6 @@ export const fetchManagerLeagues = async (managerId: string): Promise<FplManager
     
     const data = await response.json();
     
-    // Extract the leagues object from the response
     if (data.leagues) {
       return data.leagues as FplManagerLeagues;
     } else {
@@ -43,6 +40,25 @@ export const fetchLeagueStandings = async (leagueId: number): Promise<FplLeagueS
     return data as FplLeagueStandings;
   } catch (error) {
     console.error("Error fetching league standings:", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches all participants and their gameweek history for a league
+ */
+export const fetchLeagueParticipants = async (leagueId: number) => {
+  try {
+    const response = await fetch(getApiEndpoint(`/leagues-classic/${leagueId}/participants`));
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching league participants:", error);
     throw error;
   }
 };
