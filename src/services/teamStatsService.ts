@@ -1,4 +1,3 @@
-
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 
 export interface TeamStats {
@@ -15,6 +14,44 @@ export interface TeamStats {
   cost: number;
 }
 
+export interface TeamStatsResponse {
+  manager_id: string;
+  gameweek: number;
+  team_stats: Array<{
+    id: number;
+    stats: {
+      minutes: number;
+      goals_scored: number;
+      assists: number;
+      clean_sheets: number;
+      yellow_cards: number;
+      red_cards: number;
+      bonus: number;
+      total_points: number;
+      // ... other stat fields available in the API
+    };
+    // other fields available in the API
+  }>;
+}
+
+export const transformTeamStatsResponse = (response: TeamStatsResponse): TeamStats[] => {
+  // Extract player details from bootstrap-static API based on player IDs
+  // For now, create basic stats with available data
+  return response.team_stats.map(player => ({
+    player_name: `Player ${player.id}`, // Replace with actual player name when available
+    position: "Unknown", // Replace with actual position when available
+    total_points: player.stats.total_points,
+    goals_scored: player.stats.goals_scored,
+    assists: player.stats.assists,
+    clean_sheets: player.stats.clean_sheets,
+    minutes: player.stats.minutes,
+    yellow_cards: player.stats.yellow_cards,
+    red_cards: player.stats.red_cards,
+    bonus: player.stats.bonus,
+    cost: 0 // Replace with actual cost when available
+  }));
+};
+
 export const fetchMyTeamStats = async (): Promise<TeamStats[]> => {
   const managerId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
   
@@ -28,5 +65,6 @@ export const fetchMyTeamStats = async (): Promise<TeamStats[]> => {
     throw new Error(`Failed to fetch team stats: ${response.statusText}`);
   }
   
-  return await response.json();
+  const data: TeamStatsResponse = await response.json();
+  return transformTeamStatsResponse(data);
 };
