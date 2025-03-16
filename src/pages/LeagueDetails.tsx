@@ -130,8 +130,7 @@ const LeagueDetails = () => {
                           </div>
                         ) : (
                           <div className="flex items-center">
-                            <Minus className="text-neutral-400 mr-1" size={16} />
-                            <span className="text-neutral-400">0</span>
+                            <Minus className="text-neutral-400" size={16} />
                           </div>
                         )}
                       </TableCell>
