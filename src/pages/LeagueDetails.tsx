@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueStandings, fetchLeagueParticipants } from "@/services/leagueService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink, Eye, Circle } from "lucide-react";
+import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink, Eye, Minus } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { STORAGE_KEYS, saveToLocalStorage } from "@/lib/localStorage";
@@ -130,8 +130,8 @@ const LeagueDetails = () => {
                           </div>
                         ) : (
                           <div className="flex items-center">
-                            <Circle className="text-gray-400 mr-1" size={16} />
-                            <span className="text-gray-400">0</span>
+                            <Minus className="text-neutral-400 mr-1" size={16} />
+                            <span className="text-neutral-400">0</span>
                           </div>
                         )}
                       </TableCell>
