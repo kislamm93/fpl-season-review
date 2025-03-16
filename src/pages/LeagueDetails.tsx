@@ -53,10 +53,7 @@ const LeagueDetails = () => {
     return (
       <div className="space-y-4">
         <Card>
-          <CardHeader>
-            <CardTitle>{leagueData.league.name}</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <Table>
               <TableHeader>
                 <TableRow>
