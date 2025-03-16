@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Zap } from "lucide-react";
@@ -14,7 +13,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend, ReferenceDot } from "recharts";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend, ReferenceDot, BarChart, Bar } from "recharts";
 
 const ManagerHistory = () => {
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ const ManagerHistory = () => {
     }
   }, [navigate]);
   
-  const { gameweeks, isLoading, error } = useManagerHistory(managerId);
+  const { gameweeks, history, isLoading, error } = useManagerHistory(managerId);
   
   // Changed to show gameweek points instead of total points
   const pointsChartData = gameweeks.map(gw => ({
@@ -52,6 +51,13 @@ const ManagerHistory = () => {
     gwRank: gw.rank,
     points: gw.points
   }));
+  
+  // Past seasons history data
+  const pastHistoryData = history?.past?.map(season => ({
+    season: `${season.season_name}`,
+    points: season.total_points,
+    rank: season.rank,
+  })) || [];
   
   const pointsConfig = {
     points: {
@@ -76,6 +82,18 @@ const ManagerHistory = () => {
     gwRank: {
       label: "Gameweek Rank",
       color: "#10b981", // emerald-500
+    }
+  };
+
+  // Configuration for past history chart
+  const pastHistoryConfig = {
+    points: {
+      label: "Season Points",
+      color: "#ec4899", // pink-500
+    },
+    rank: {
+      label: "Season Rank",
+      color: "#8b5cf6", // violet-500
     }
   };
 
@@ -195,7 +213,6 @@ const ManagerHistory = () => {
             </CardContent>
           </Card>
 
-          {/* New Gameweek Rank Chart */}
           <Card>
             <CardHeader>
               <CardTitle>Gameweek Rank</CardTitle>
@@ -313,6 +330,124 @@ const ManagerHistory = () => {
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-[#9b87f5]"></div>
                   <span className="text-sm">Overall Rank (higher is worse)</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Past Seasons Performance</CardTitle>
+              <CardDescription>
+                Your overall performance across previous FPL seasons
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="w-full aspect-video">
+                  <Skeleton className="w-full h-full" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-8 text-destructive">
+                  Error loading manager history data
+                </div>
+              ) : !history?.past || history.past.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No past season data available for this manager
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="border-0 shadow-none">
+                    <CardHeader className="px-0 pt-0">
+                      <CardTitle className="text-lg">Season Points</CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-0 pt-0">
+                      <ChartContainer className="aspect-video" config={pastHistoryConfig}>
+                        <BarChart data={pastHistoryData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="season" />
+                          <YAxis />
+                          <Tooltip 
+                            content={({active, payload}) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+                                    <div className="font-medium">{payload[0].payload.season}</div>
+                                    <div className="flex justify-between">
+                                      <span className="text-muted-foreground">Total Points</span>
+                                      <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].value}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-muted-foreground">Final Rank</span>
+                                      <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.rank.toLocaleString()}</span>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Bar 
+                            dataKey="points" 
+                            fill="var(--color-points)" 
+                            name="Season Points"
+                          />
+                        </BarChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-0 shadow-none">
+                    <CardHeader className="px-0 pt-0">
+                      <CardTitle className="text-lg">Season Rank</CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-0 pt-0">
+                      <ChartContainer className="aspect-video" config={pastHistoryConfig}>
+                        <BarChart data={pastHistoryData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="season" />
+                          <YAxis 
+                            tickFormatter={(value) => value.toLocaleString()}
+                          />
+                          <Tooltip 
+                            content={({active, payload}) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+                                    <div className="font-medium">{payload[0].payload.season}</div>
+                                    <div className="flex justify-between">
+                                      <span className="text-muted-foreground">Final Rank</span>
+                                      <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.rank.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-muted-foreground">Total Points</span>
+                                      <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.points}</span>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Bar 
+                            dataKey="rank" 
+                            fill="var(--color-rank)" 
+                            name="Season Rank"
+                          />
+                        </BarChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+              <div className="mt-4 flex justify-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#ec4899]"></div>
+                  <span className="text-sm">Season Points</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#8b5cf6]"></div>
+                  <span className="text-sm">Season Rank (higher is worse)</span>
                 </div>
               </div>
             </CardContent>
