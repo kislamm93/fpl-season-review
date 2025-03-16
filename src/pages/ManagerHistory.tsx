@@ -32,9 +32,11 @@ const ManagerHistory = () => {
   
   const { gameweeks, isLoading, error } = useManagerHistory(managerId);
   
+  // Changed to show gameweek points instead of total points
   const pointsChartData = gameweeks.map(gw => ({
     gameweek: `GW ${gw.event}`,
-    totalPoints: gw.total_points,
+    points: gw.points,
+    overallRank: gw.overall_rank,
   }));
 
   const rankChartData = gameweeks.map(gw => ({
@@ -43,10 +45,14 @@ const ManagerHistory = () => {
   }));
   
   const pointsConfig = {
-    totalPoints: {
-      label: "Total Points",
+    points: {
+      label: "Gameweek Points",
       color: "#6366f1", // indigo-500
     },
+    overallRank: {
+      label: "Overall Rank",
+      color: "transparent", // Hidden in chart but used for tooltip
+    }
   };
 
   const rankConfig = {
@@ -79,7 +85,7 @@ const ManagerHistory = () => {
             <CardHeader>
               <CardTitle>Points Performance</CardTitle>
               <CardDescription>
-                Track your total points across gameweeks
+                Track your gameweek points across the season
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -101,15 +107,36 @@ const ManagerHistory = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="gameweek" />
                     <YAxis />
-                    <Tooltip content={<ChartTooltipContent />} />
+                    <Tooltip 
+                      content={
+                        ({active, payload}) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+                                <div className="font-medium">{payload[0].payload.gameweek}</div>
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground">Gameweek Points</span>
+                                  <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].value}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground">Overall Rank</span>
+                                  <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.overallRank.toLocaleString()}</span>
+                                </div>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }
+                      }
+                    />
                     <Line 
                       type="monotone" 
-                      dataKey="totalPoints" 
-                      stroke="var(--color-totalPoints)" 
+                      dataKey="points" 
+                      stroke="var(--color-points)" 
                       strokeWidth={2} 
                       dot={{ strokeWidth: 2, r: 4 }}
                       activeDot={{ r: 6 }}
-                      name="Total Points"
+                      name="Gameweek Points"
                     />
                     <Legend content={<ChartLegendContent />} />
                   </LineChart>
@@ -118,7 +145,7 @@ const ManagerHistory = () => {
               <div className="mt-4 flex justify-center">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-[#6366f1]"></div>
-                  <span className="text-sm">Total Points</span>
+                  <span className="text-sm">Gameweek Points</span>
                 </div>
               </div>
             </CardContent>
