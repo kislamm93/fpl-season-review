@@ -46,6 +46,13 @@ const ManagerHistory = () => {
     rank: gw.overall_rank,
   }));
   
+  // New data for gameweek rank chart
+  const gameweekRankData = gameweeks.map(gw => ({
+    gameweek: `GW ${gw.event}`,
+    gwRank: gw.rank,
+    points: gw.points
+  }));
+  
   const pointsConfig = {
     points: {
       label: "Gameweek Points",
@@ -61,6 +68,14 @@ const ManagerHistory = () => {
     rank: {
       label: "Overall Rank",
       color: "#9b87f5", // purple
+    }
+  };
+  
+  // Configuration for the new gameweek rank chart
+  const gwRankConfig = {
+    gwRank: {
+      label: "Gameweek Rank",
+      color: "#10b981", // emerald-500
     }
   };
 
@@ -175,6 +190,78 @@ const ManagerHistory = () => {
                   <span className="text-sm flex items-center">
                     <Zap className="h-3 w-3 mr-0.5 text-[#ef4444]" /> Transfer Hit
                   </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* New Gameweek Rank Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Gameweek Rank</CardTitle>
+              <CardDescription>
+                Your rank position within each individual gameweek
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="w-full aspect-video">
+                  <Skeleton className="w-full h-full" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-8 text-destructive">
+                  Error loading manager history data
+                </div>
+              ) : gameweeks.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No gameweek data available for this manager
+                </div>
+              ) : (
+                <ChartContainer className="aspect-video" config={gwRankConfig}>
+                  <LineChart data={gameweekRankData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="gameweek" />
+                    <YAxis 
+                      tickFormatter={(value) => value.toLocaleString()}
+                      reversed={false} // Higher rank is worse, so larger numbers at bottom
+                    />
+                    <Tooltip
+                      content={({active, payload}) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+                              <div className="font-medium">{payload[0].payload.gameweek}</div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Gameweek Rank</span>
+                                <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].value.toLocaleString()}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Points</span>
+                                <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.points}</span>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="gwRank" 
+                      stroke="var(--color-gwRank)" 
+                      strokeWidth={2} 
+                      dot={{ strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6 }}
+                      name="Gameweek Rank"
+                    />
+                    <Legend content={<ChartLegendContent />} />
+                  </LineChart>
+                </ChartContainer>
+              )}
+              <div className="mt-4 flex justify-center">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#10b981]"></div>
+                  <span className="text-sm">Gameweek Rank (higher is worse)</span>
                 </div>
               </div>
             </CardContent>
