@@ -54,7 +54,11 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
         if (Array.isArray(participant.history)) {
           const gwHistory = participant.history.find(history => history && history.event === gw);
           if (gwHistory) {
-            dataPoint[participant.player_name] = gwHistory.rank;
+            // Use overall_rank instead of rank if dealing with manager history
+            const rankValue = gwHistory.rank || gwHistory.overall_rank;
+            if (rankValue) {
+              dataPoint[participant.player_name] = rankValue;
+            }
           }
         }
       });
@@ -82,7 +86,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Gameweek Rank History</CardTitle>
+          <CardTitle>League Rank History</CardTitle>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-[400px] w-full" />
@@ -95,7 +99,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Gameweek Rank History</CardTitle>
+          <CardTitle>League Rank History</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-destructive">
@@ -110,7 +114,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Gameweek Rank History</CardTitle>
+          <CardTitle>League Rank History</CardTitle>
         </CardHeader>
         <CardContent>
           <div>No rank history data available.</div>
@@ -122,7 +126,7 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Gameweek Rank History</CardTitle>
+        <CardTitle>League Rank History</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">

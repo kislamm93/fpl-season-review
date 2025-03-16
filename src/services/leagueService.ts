@@ -58,18 +58,20 @@ export const fetchLeagueParticipants = async (leagueId: number) => {
     }
     
     const data = await response.json();
+    console.log('Received participants data:', data);
     
     // Format the data for the chart
-    if (data && Array.isArray(data.participants)) {
-      return data.participants.map(participant => ({
-        entry_id: participant.entry,
+    if (data && Array.isArray(data)) {
+      return data.map(participant => ({
+        entry_id: participant.manager_id,
         player_name: participant.player_name,
-        team_name: participant.entry_name,
-        history: Array.isArray(participant.history) ? participant.history : []
+        team_name: participant.player_name, // Using player_name as team_name if not available
+        history: participant.history && Array.isArray(participant.history.current) 
+          ? participant.history.current 
+          : []
       }));
     }
     
-    console.log('Received participants data:', data);
     return [];
   } catch (error) {
     console.error("Error fetching league participants:", error);
