@@ -63,6 +63,7 @@ const MyTeamStats = () => {
                     <TableHead className="text-right">Bonus</TableHead>
                     <TableHead className="text-right">xG</TableHead>
                     <TableHead className="text-right">xA</TableHead>
+                    <TableHead className="text-right">xGI</TableHead>
                     <TableHead className="text-right">xGC</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -80,6 +81,7 @@ const MyTeamStats = () => {
                       <TableCell className="text-right">{player.bonus}</TableCell>
                       <TableCell className="text-right">{player.expected_goals}</TableCell>
                       <TableCell className="text-right">{player.expected_assists}</TableCell>
+                      <TableCell className="text-right">{player.expected_goal_involvements}</TableCell>
                       <TableCell className="text-right">{player.expected_goals_conceded}</TableCell>
                     </TableRow>
                   ))}

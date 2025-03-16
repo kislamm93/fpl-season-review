@@ -1,3 +1,4 @@
+
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 
 export interface TeamStats {
@@ -12,6 +13,7 @@ export interface TeamStats {
   bonus: number;
   expected_goals: string;
   expected_assists: string;
+  expected_goal_involvements: string;
   expected_goals_conceded: string;
 }
 
@@ -31,6 +33,7 @@ export interface TeamStatsResponse {
       total_points: number;
       expected_goals: string;
       expected_assists: string;
+      expected_goal_involvements: string;
       expected_goals_conceded: string;
       // ... other stat fields available in the API
     };
@@ -53,6 +56,7 @@ export const transformTeamStatsResponse = (response: TeamStatsResponse): TeamSta
     bonus: player.stats.bonus,
     expected_goals: player.stats.expected_goals,
     expected_assists: player.stats.expected_assists,
+    expected_goal_involvements: player.stats.expected_goal_involvements,
     expected_goals_conceded: player.stats.expected_goals_conceded
   }));
 };
