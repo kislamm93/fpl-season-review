@@ -13,26 +13,40 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend, ReferenceDot, BarChart, Bar } from "recharts";
+import { Slider } from "@/components/ui/slider";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend, ReferenceDot } from "recharts";
 
 const ManagerHistory = () => {
   const navigate = useNavigate();
   const [managerId, setManagerId] = useState<string | null>(null);
   
+  const [pointsChartRange, setPointsChartRange] = useState<[number, number]>([1, 38]);
+  const [gwRankChartRange, setGwRankChartRange] = useState<[number, number]>([1, 38]);
+  const [overallRankChartRange, setOverallRankChartRange] = useState<[number, number]>([1, 38]);
+  
   useEffect(() => {
     const storedId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
     setManagerId(storedId);
     
-    // If no manager ID, redirect to home
     if (!storedId) {
       navigate('/');
     }
   }, [navigate]);
   
-  const { gameweeks, history, isLoading, error } = useManagerHistory(managerId);
+  const { gameweeks, filterGameweeksByRange, isLoading, error } = useManagerHistory(managerId);
   
-  // Changed to show gameweek points instead of total points
-  const pointsChartData = gameweeks.map(gw => ({
+  useEffect(() => {
+    if (gameweeks.length > 0) {
+      const minGw = Math.min(...gameweeks.map(gw => gw.event));
+      const maxGw = Math.max(...gameweeks.map(gw => gw.event));
+      
+      setPointsChartRange([minGw, maxGw]);
+      setGwRankChartRange([minGw, maxGw]);
+      setOverallRankChartRange([minGw, maxGw]);
+    }
+  }, [gameweeks]);
+  
+  const pointsChartData = filterGameweeksByRange(pointsChartRange[0], pointsChartRange[1]).map(gw => ({
     gameweek: `GW ${gw.event}`,
     points: gw.points,
     overallRank: gw.overall_rank,
@@ -40,24 +54,16 @@ const ManagerHistory = () => {
     tookHit: gw.event_transfers_cost > 0
   }));
 
-  const rankChartData = gameweeks.map(gw => ({
+  const rankChartData = filterGameweeksByRange(overallRankChartRange[0], overallRankChartRange[1]).map(gw => ({
     gameweek: `GW ${gw.event}`,
     rank: gw.overall_rank,
   }));
   
-  // New data for gameweek rank chart
-  const gameweekRankData = gameweeks.map(gw => ({
+  const gameweekRankData = filterGameweeksByRange(gwRankChartRange[0], gwRankChartRange[1]).map(gw => ({
     gameweek: `GW ${gw.event}`,
     gwRank: gw.rank,
     points: gw.points
   }));
-  
-  // Past seasons history data
-  const pastHistoryData = history?.past?.map(season => ({
-    season: `${season.season_name}`,
-    points: season.total_points,
-    rank: season.rank,
-  })) || [];
   
   const pointsConfig = {
     points: {
@@ -77,7 +83,6 @@ const ManagerHistory = () => {
     }
   };
   
-  // Configuration for the new gameweek rank chart
   const gwRankConfig = {
     gwRank: {
       label: "Gameweek Rank",
@@ -85,17 +90,36 @@ const ManagerHistory = () => {
     }
   };
 
-  // Configuration for past history chart
-  const pastHistoryConfig = {
-    points: {
-      label: "Season Points",
-      color: "#ec4899", // pink-500
-    },
-    rank: {
-      label: "Season Rank",
-      color: "#8b5cf6", // violet-500
-    }
+  const renderSliderControl = (
+    value: [number, number], 
+    onChange: (value: [number, number]) => void,
+    min: number,
+    max: number
+  ) => {
+    return (
+      <div className="mt-2 px-4">
+        <div className="flex justify-between text-xs text-muted-foreground mb-1">
+          <span>GW {value[0]}</span>
+          <span>GW {value[1]}</span>
+        </div>
+        <Slider
+          defaultValue={[min, max]}
+          value={value}
+          min={min}
+          max={max}
+          step={1}
+          onValueChange={(val) => onChange(val as [number, number])}
+          className="my-2"
+        />
+        <div className="text-xs text-center text-muted-foreground">
+          Showing GW{value[0]} - GW{value[1]}
+        </div>
+      </div>
+    );
   };
+
+  const minGw = gameweeks.length > 0 ? Math.min(...gameweeks.map(gw => gw.event)) : 1;
+  const maxGw = gameweeks.length > 0 ? Math.max(...gameweeks.map(gw => gw.event)) : 38;
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
@@ -137,64 +161,72 @@ const ManagerHistory = () => {
                   No gameweek data available for this manager
                 </div>
               ) : (
-                <ChartContainer className="aspect-video" config={pointsConfig}>
-                  <LineChart data={pointsChartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="gameweek" />
-                    <YAxis />
-                    <Tooltip 
-                      content={
-                        ({active, payload}) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-                                <div className="font-medium">{payload[0].payload.gameweek}</div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">Gameweek Points</span>
-                                  <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].value}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">Overall Rank</span>
-                                  <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.overallRank.toLocaleString()}</span>
-                                </div>
-                                {payload[0].payload.transferCost > 0 && (
-                                  <div className="flex justify-between text-destructive">
-                                    <span className="flex items-center gap-0.5">
-                                      <Zap className="h-3 w-3" /> Transfer Hit
-                                    </span>
-                                    <span className="font-mono font-medium tabular-nums">-{payload[0].payload.transferCost}pts</span>
+                <>
+                  <ChartContainer className="aspect-video" config={pointsConfig}>
+                    <LineChart data={pointsChartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="gameweek" />
+                      <YAxis />
+                      <Tooltip 
+                        content={
+                          ({active, payload}) => {
+                            if (active && payload && payload.length) {
+                              return (
+                                <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+                                  <div className="font-medium">{payload[0].payload.gameweek}</div>
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Gameweek Points</span>
+                                    <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].value}</span>
                                   </div>
-                                )}
-                              </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Overall Rank</span>
+                                    <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.overallRank.toLocaleString()}</span>
+                                  </div>
+                                  {payload[0].payload.transferCost > 0 && (
+                                    <div className="flex justify-between text-destructive">
+                                      <span className="flex items-center gap-0.5">
+                                        <Zap className="h-3 w-3" /> Transfer Hit
+                                      </span>
+                                      <span className="font-mono font-medium tabular-nums">-{payload[0].payload.transferCost}pts</span>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            }
+                            return null;
+                          }
+                        }
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="points" 
+                        stroke="var(--color-points)" 
+                        strokeWidth={2} 
+                        dot={(props) => {
+                          const { cx, cy, payload } = props;
+                          if (payload.tookHit) {
+                            return (
+                              <g>
+                                <circle cx={cx} cy={cy} r={4} fill="var(--color-points)" stroke="var(--color-points)" />
+                                <circle cx={cx} cy={cy} r={7} fill="none" stroke="#ef4444" strokeWidth={1.5} />
+                              </g>
                             );
                           }
-                          return null;
-                        }
-                      }
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="points" 
-                      stroke="var(--color-points)" 
-                      strokeWidth={2} 
-                      dot={(props) => {
-                        const { cx, cy, payload } = props;
-                        if (payload.tookHit) {
-                          return (
-                            <g>
-                              <circle cx={cx} cy={cy} r={4} fill="var(--color-points)" stroke="var(--color-points)" />
-                              <circle cx={cx} cy={cy} r={7} fill="none" stroke="#ef4444" strokeWidth={1.5} />
-                            </g>
-                          );
-                        }
-                        return <circle cx={cx} cy={cy} r={4} fill="var(--color-points)" stroke="var(--color-points)" />;
-                      }}
-                      activeDot={{ r: 6 }}
-                      name="Gameweek Points"
-                    />
-                    <Legend content={<ChartLegendContent />} />
-                  </LineChart>
-                </ChartContainer>
+                          return <circle cx={cx} cy={cy} r={4} fill="var(--color-points)" stroke="var(--color-points)" />;
+                        }}
+                        activeDot={{ r: 6 }}
+                        name="Gameweek Points"
+                      />
+                      <Legend content={<ChartLegendContent />} />
+                    </LineChart>
+                  </ChartContainer>
+                  {renderSliderControl(
+                    pointsChartRange,
+                    setPointsChartRange,
+                    minGw,
+                    maxGw
+                  )}
+                </>
               )}
               <div className="mt-4 flex justify-center gap-4">
                 <div className="flex items-center gap-2">
@@ -234,46 +266,54 @@ const ManagerHistory = () => {
                   No gameweek data available for this manager
                 </div>
               ) : (
-                <ChartContainer className="aspect-video" config={gwRankConfig}>
-                  <LineChart data={gameweekRankData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="gameweek" />
-                    <YAxis 
-                      tickFormatter={(value) => value.toLocaleString()}
-                      reversed={false} // Higher rank is worse, so larger numbers at bottom
-                    />
-                    <Tooltip
-                      content={({active, payload}) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-                              <div className="font-medium">{payload[0].payload.gameweek}</div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Gameweek Rank</span>
-                                <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].value.toLocaleString()}</span>
+                <>
+                  <ChartContainer className="aspect-video" config={gwRankConfig}>
+                    <LineChart data={gameweekRankData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="gameweek" />
+                      <YAxis 
+                        tickFormatter={(value) => value.toLocaleString()}
+                        reversed={false} // Higher rank is worse, so larger numbers at bottom
+                      />
+                      <Tooltip
+                        content={({active, payload}) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+                                <div className="font-medium">{payload[0].payload.gameweek}</div>
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground">Gameweek Rank</span>
+                                  <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].value.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground">Points</span>
+                                  <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.points}</span>
+                                </div>
                               </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Points</span>
-                                <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.points}</span>
-                              </div>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="gwRank" 
-                      stroke="var(--color-gwRank)" 
-                      strokeWidth={2} 
-                      dot={{ strokeWidth: 2, r: 4 }}
-                      activeDot={{ r: 6 }}
-                      name="Gameweek Rank"
-                    />
-                    <Legend content={<ChartLegendContent />} />
-                  </LineChart>
-                </ChartContainer>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="gwRank" 
+                        stroke="var(--color-gwRank)" 
+                        strokeWidth={2} 
+                        dot={{ strokeWidth: 2, r: 4 }}
+                        activeDot={{ r: 6 }}
+                        name="Gameweek Rank"
+                      />
+                      <Legend content={<ChartLegendContent />} />
+                    </LineChart>
+                  </ChartContainer>
+                  {renderSliderControl(
+                    gwRankChartRange,
+                    setGwRankChartRange,
+                    minGw,
+                    maxGw
+                  )}
+                </>
               )}
               <div className="mt-4 flex justify-center">
                 <div className="flex items-center gap-2">
@@ -305,149 +345,39 @@ const ManagerHistory = () => {
                   No gameweek data available for this manager
                 </div>
               ) : (
-                <ChartContainer className="aspect-video" config={rankConfig}>
-                  <LineChart data={rankChartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="gameweek" />
-                    <YAxis 
-                      tickFormatter={(value) => value.toLocaleString()}
-                    />
-                    <Tooltip content={<ChartTooltipContent />} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="rank" 
-                      stroke="var(--color-rank)" 
-                      strokeWidth={2} 
-                      dot={{ strokeWidth: 2, r: 4 }}
-                      activeDot={{ r: 6 }}
-                      name="Overall Rank"
-                    />
-                    <Legend content={<ChartLegendContent />} />
-                  </LineChart>
-                </ChartContainer>
+                <>
+                  <ChartContainer className="aspect-video" config={rankConfig}>
+                    <LineChart data={rankChartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="gameweek" />
+                      <YAxis 
+                        tickFormatter={(value) => value.toLocaleString()}
+                      />
+                      <Tooltip content={<ChartTooltipContent />} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="rank" 
+                        stroke="var(--color-rank)" 
+                        strokeWidth={2} 
+                        dot={{ strokeWidth: 2, r: 4 }}
+                        activeDot={{ r: 6 }}
+                        name="Overall Rank"
+                      />
+                      <Legend content={<ChartLegendContent />} />
+                    </LineChart>
+                  </ChartContainer>
+                  {renderSliderControl(
+                    overallRankChartRange,
+                    setOverallRankChartRange,
+                    minGw,
+                    maxGw
+                  )}
+                </>
               )}
               <div className="mt-4 flex justify-center">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-[#9b87f5]"></div>
                   <span className="text-sm">Overall Rank (higher is worse)</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Past Seasons Performance</CardTitle>
-              <CardDescription>
-                Your overall performance across previous FPL seasons
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="w-full aspect-video">
-                  <Skeleton className="w-full h-full" />
-                </div>
-              ) : error ? (
-                <div className="text-center py-8 text-destructive">
-                  Error loading manager history data
-                </div>
-              ) : !history?.past || history.past.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No past season data available for this manager
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card className="border-0 shadow-none">
-                    <CardHeader className="px-0 pt-0">
-                      <CardTitle className="text-lg">Season Points</CardTitle>
-                    </CardHeader>
-                    <CardContent className="px-0 pt-0">
-                      <ChartContainer className="aspect-video" config={pastHistoryConfig}>
-                        <BarChart data={pastHistoryData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="season" />
-                          <YAxis />
-                          <Tooltip 
-                            content={({active, payload}) => {
-                              if (active && payload && payload.length) {
-                                return (
-                                  <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-                                    <div className="font-medium">{payload[0].payload.season}</div>
-                                    <div className="flex justify-between">
-                                      <span className="text-muted-foreground">Total Points</span>
-                                      <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].value}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className="text-muted-foreground">Final Rank</span>
-                                      <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.rank.toLocaleString()}</span>
-                                    </div>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            }}
-                          />
-                          <Bar 
-                            dataKey="points" 
-                            fill="var(--color-points)" 
-                            name="Season Points"
-                          />
-                        </BarChart>
-                      </ChartContainer>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-0 shadow-none">
-                    <CardHeader className="px-0 pt-0">
-                      <CardTitle className="text-lg">Season Rank</CardTitle>
-                    </CardHeader>
-                    <CardContent className="px-0 pt-0">
-                      <ChartContainer className="aspect-video" config={pastHistoryConfig}>
-                        <BarChart data={pastHistoryData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="season" />
-                          <YAxis 
-                            tickFormatter={(value) => value.toLocaleString()}
-                          />
-                          <Tooltip 
-                            content={({active, payload}) => {
-                              if (active && payload && payload.length) {
-                                return (
-                                  <div className="grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-                                    <div className="font-medium">{payload[0].payload.season}</div>
-                                    <div className="flex justify-between">
-                                      <span className="text-muted-foreground">Final Rank</span>
-                                      <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.rank.toLocaleString()}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span className="text-muted-foreground">Total Points</span>
-                                      <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.points}</span>
-                                    </div>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            }}
-                          />
-                          <Bar 
-                            dataKey="rank" 
-                            fill="var(--color-rank)" 
-                            name="Season Rank"
-                          />
-                        </BarChart>
-                      </ChartContainer>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-              <div className="mt-4 flex justify-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-[#ec4899]"></div>
-                  <span className="text-sm">Season Points</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-[#8b5cf6]"></div>
-                  <span className="text-sm">Season Rank (higher is worse)</span>
                 </div>
               </div>
             </CardContent>
