@@ -12,6 +12,7 @@ export const useManagerLeagues = (managerId: string | null) => {
     queryKey: ["manager-leagues", managerId],
     queryFn: () => (managerId ? fetchManagerLeagues(managerId) : Promise.reject("No manager ID")),
     enabled: !!managerId,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes to prevent unnecessary refetches
   });
 
   // Combine classic and h2h leagues for display

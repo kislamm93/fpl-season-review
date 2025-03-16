@@ -5,6 +5,7 @@ import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 const MiniLeaguePreview = () => {
   const managerId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
@@ -96,6 +97,7 @@ const MiniLeaguePreview = () => {
                 <TableHead>League Name</TableHead>
                 <TableHead>League ID</TableHead>
                 <TableHead>Current Rank</TableHead>
+                <TableHead>Trend</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -103,7 +105,16 @@ const MiniLeaguePreview = () => {
                 <TableRow key={`${league.league_type}-${league.id}`}>
                   <TableCell className="font-medium">{league.name}</TableCell>
                   <TableCell>{league.id}</TableCell>
-                  <TableCell>{league.rank || "N/A"}</TableCell>
+                  <TableCell>{league.entry_rank || "N/A"}</TableCell>
+                  <TableCell>
+                    {league.entry_rank && league.entry_last_rank && (
+                      league.entry_rank <= league.entry_last_rank ? (
+                        <ArrowUp className="text-green-500" size={16} />
+                      ) : (
+                        <ArrowDown className="text-red-500" size={16} />
+                      )
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
