@@ -32,6 +32,34 @@ const MyTeamStats = () => {
     }
   }, [teamStats]);
 
+  // Function to get team name from team code (placeholder)
+  const getTeamName = (teamCode: number) => {
+    const teamNames: Record<number, string> = {
+      1: "Arsenal",
+      2: "Aston Villa",
+      3: "Bournemouth",
+      4: "Brentford",
+      5: "Brighton",
+      6: "Burnley",
+      7: "Chelsea",
+      8: "Crystal Palace",
+      9: "Everton",
+      10: "Fulham",
+      11: "Liverpool",
+      12: "Luton",
+      13: "Man City",
+      14: "Man Utd",
+      15: "Newcastle",
+      16: "Nott'm Forest",
+      17: "Sheffield Utd",
+      18: "Spurs",
+      19: "West Ham",
+      20: "Wolves",
+    };
+    
+    return teamNames[teamCode] || `Team ${teamCode}`;
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-6">My Team Stats</h1>
@@ -53,6 +81,7 @@ const MyTeamStats = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Player</TableHead>
+                    <TableHead>Team</TableHead>
                     <TableHead className="text-right">Points</TableHead>
                     <TableHead className="text-right">PPG</TableHead>
                     <TableHead className="text-right">Selected</TableHead>
@@ -73,6 +102,7 @@ const MyTeamStats = () => {
                   {teamStats?.map((player, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{player.web_name || player.player_name}</TableCell>
+                      <TableCell>{getTeamName(player.team)}</TableCell>
                       <TableCell className="text-right">{player.total_points}</TableCell>
                       <TableCell className="text-right">{player.points_per_game}</TableCell>
                       <TableCell className="text-right">{player.selected_by_percent}%</TableCell>
