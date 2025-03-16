@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { STORAGE_KEYS, getFromLocalStorage, saveToLocalStorage } from "@/lib/localStorage";
 import { Button } from "@/components/ui/button";
@@ -10,9 +9,10 @@ import { Save, Check, RefreshCw } from "lucide-react";
 
 interface ManagerIdFormProps {
   className?: string;
+  onManagerIdChange?: () => void;
 }
 
-const ManagerIdForm: React.FC<ManagerIdFormProps> = ({ className }) => {
+const ManagerIdForm: React.FC<ManagerIdFormProps> = ({ className, onManagerIdChange }) => {
   const [managerId, setManagerId] = useState<string>("");
   const [savedId, setSavedId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -66,6 +66,11 @@ const ManagerIdForm: React.FC<ManagerIdFormProps> = ({ className }) => {
         description: `Your FPL Manager ID (${managerId}) has been saved.`,
         duration: 4000,
       });
+      
+      // Notify parent component about the manager ID change
+      if (onManagerIdChange) {
+        onManagerIdChange();
+      }
     }, 800);
   };
 
@@ -79,6 +84,11 @@ const ManagerIdForm: React.FC<ManagerIdFormProps> = ({ className }) => {
     toast("Manager ID has been reset", {
       description: "You can enter a new manager ID now.",
     });
+    
+    // Notify parent component about the manager ID change
+    if (onManagerIdChange) {
+      onManagerIdChange();
+    }
   };
 
   return (
