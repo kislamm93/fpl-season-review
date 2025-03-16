@@ -1,6 +1,6 @@
 
 import React from "react";
-import { History, Trophy } from "lucide-react";
+import { History, LayoutDashboard, Trophy } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -29,6 +29,14 @@ const AppSidebar = ({ managerId }: AppSidebarProps) => {
           <SidebarGroupLabel>Manager Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Dashboard">
+                  <a href="/">
+                    <LayoutDashboard />
+                    <span>Dashboard</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Manager History">
                   <a href="/manager-history">
