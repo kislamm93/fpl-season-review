@@ -1,11 +1,10 @@
-
 import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueStandings, fetchLeagueParticipants } from "@/services/leagueService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink, Eye } from "lucide-react";
+import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink, Eye, Circle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { STORAGE_KEYS, saveToLocalStorage } from "@/lib/localStorage";
@@ -130,7 +129,10 @@ const LeagueDetails = () => {
                             <span className="text-red-500">{rankChange}</span>
                           </div>
                         ) : (
-                          <span className="text-muted-foreground">-</span>
+                          <div className="flex items-center">
+                            <Circle className="text-gray-400 mr-1" size={16} />
+                            <span className="text-gray-400">0</span>
+                          </div>
                         )}
                       </TableCell>
                       <TableCell className="text-right">{entry.total}</TableCell>
