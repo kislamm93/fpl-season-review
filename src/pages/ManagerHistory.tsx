@@ -82,7 +82,7 @@ const ManagerHistory = () => {
       </header>
       
       <main className="flex-1 container max-w-screen-2xl py-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 gap-6 mb-6">
           <Card>
             <CardHeader>
               <CardTitle>Points Performance</CardTitle>
