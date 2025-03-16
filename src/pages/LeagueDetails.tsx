@@ -1,16 +1,19 @@
 
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLeagueStandings } from "@/services/leagueService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowUp, ArrowDown, ExternalLink, Eye } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { STORAGE_KEYS, saveToLocalStorage } from "@/lib/localStorage";
+import { toast } from "@/components/ui/use-toast";
 
 const LeagueDetails = () => {
   const { leagueId } = useParams<{ leagueId: string }>();
+  const navigate = useNavigate();
   
   const { data: leagueData, isLoading, error } = useQuery({
     queryKey: ["league-standings", leagueId],
@@ -20,6 +23,21 @@ const LeagueDetails = () => {
 
   const handleRowClick = (entryId: number) => {
     window.open(`https://fantasy.premierleague.com/entry/${entryId}/history`, '_blank');
+  };
+  
+  const handleViewManager = (e: React.MouseEvent, entryId: number) => {
+    e.stopPropagation(); // Prevent the row click from firing
+    saveToLocalStorage(STORAGE_KEYS.MANAGER_ID, entryId.toString());
+    
+    // Dispatch event to notify other components about the change
+    window.dispatchEvent(new Event('local-storage-change'));
+    
+    toast({
+      title: "Manager ID Updated",
+      description: `Viewing manager with ID: ${entryId}`,
+    });
+    
+    navigate('/manager-history');
   };
 
   const renderContent = () => {
@@ -67,6 +85,7 @@ const LeagueDetails = () => {
                   <TableHead>Previous Rank</TableHead>
                   <TableHead>Trend</TableHead>
                   <TableHead className="text-right">Points</TableHead>
+                  <TableHead className="text-center w-16">View</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -104,6 +123,17 @@ const LeagueDetails = () => {
                         )}
                       </TableCell>
                       <TableCell className="text-right">{entry.total}</TableCell>
+                      <TableCell className="text-center">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
+                          onClick={(e) => handleViewManager(e, entry.entry)}
+                        >
+                          <Eye size={16} />
+                          <span className="sr-only">View manager history</span>
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
