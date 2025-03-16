@@ -11,8 +11,10 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
 } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend } from "recharts";
 
 const ManagerHistory = () => {
   const navigate = useNavigate();
@@ -39,12 +41,16 @@ const ManagerHistory = () => {
   
   const config = {
     points: {
-      label: "Points",
+      label: "Gameweek Points",
       color: "#10b981", // green-500
     },
     totalPoints: {
       label: "Total Points",
       color: "#6366f1", // indigo-500
+    },
+    rank: {
+      label: "Overall Rank",
+      color: "#9b87f5", // purple
     }
   };
 
@@ -88,10 +94,16 @@ const ManagerHistory = () => {
               </div>
             ) : (
               <ChartContainer className="aspect-video" config={config}>
-                <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="gameweek" />
-                  <YAxis />
+                  <YAxis yAxisId="left" orientation="left" />
+                  <YAxis 
+                    yAxisId="right" 
+                    orientation="right" 
+                    domain={['auto', 'auto']}
+                    reversed={true} // Reverse the axis since lower rank is better
+                  />
                   <Tooltip content={<ChartTooltipContent />} />
                   <Line 
                     type="monotone" 
@@ -100,7 +112,8 @@ const ManagerHistory = () => {
                     strokeWidth={2} 
                     dot={{ strokeWidth: 2, r: 4 }}
                     activeDot={{ r: 6 }}
-                    name="Points"
+                    name="Gameweek Points"
+                    yAxisId="left"
                   />
                   <Line 
                     type="monotone" 
@@ -110,10 +123,24 @@ const ManagerHistory = () => {
                     dot={{ strokeWidth: 2, r: 4 }}
                     activeDot={{ r: 6 }}
                     name="Total Points"
+                    yAxisId="left"
                   />
+                  <Legend content={<ChartLegendContent />} />
                 </LineChart>
               </ChartContainer>
             )}
+            <div className="mt-4 flex justify-center">
+              <div className="flex gap-6">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#10b981]"></div>
+                  <span className="text-sm">Gameweek Points</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#6366f1]"></div>
+                  <span className="text-sm">Total Points</span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
