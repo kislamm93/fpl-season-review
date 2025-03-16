@@ -82,33 +82,34 @@ const MiniLeaguePreview = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mini League Preview</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {leagues.map((league) => (
-          <Card key={`${league.league_type}-${league.id}`} className="hover:shadow-md transition-shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">{league.name}</CardTitle>
-              <CardDescription>
-                Type: {league.league_type === "c" ? "Classic" : "Head-to-Head"} • 
-                Scoring: {league.scoring} • 
-                Rank: {league.rank || "N/A"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-sm">
-                <span className="font-medium">League ID:</span> {league.id}
-              </div>
-              <div className="mt-2">
-                <a 
-                  href={`/league-standings/${league.id}`} 
-                  className="text-primary hover:underline text-sm"
-                >
-                  View Full Standings
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Mini Leagues</CardTitle>
+          <CardDescription>
+            List of leagues you are currently participating in
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>League Name</TableHead>
+                <TableHead>League ID</TableHead>
+                <TableHead>Current Rank</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {leagues.map((league) => (
+                <TableRow key={`${league.league_type}-${league.id}`}>
+                  <TableCell className="font-medium">{league.name}</TableCell>
+                  <TableCell>{league.id}</TableCell>
+                  <TableCell>{league.rank || "N/A"}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };
