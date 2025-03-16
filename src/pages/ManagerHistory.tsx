@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -149,7 +150,6 @@ const ManagerHistory = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="gameweek" />
                     <YAxis 
-                      reversed={true} // Reverse the axis since lower rank is better
                       tickFormatter={(value) => value.toLocaleString()}
                     />
                     <Tooltip content={<ChartTooltipContent />} />
@@ -169,7 +169,7 @@ const ManagerHistory = () => {
               <div className="mt-4 flex justify-center">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-[#9b87f5]"></div>
-                  <span className="text-sm">Overall Rank (lower is better)</span>
+                  <span className="text-sm">Overall Rank (higher is worse)</span>
                 </div>
               </div>
             </CardContent>
