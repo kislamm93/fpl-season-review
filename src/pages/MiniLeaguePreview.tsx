@@ -97,6 +97,7 @@ const MiniLeaguePreview = () => {
                 <TableHead>League Name</TableHead>
                 <TableHead>League ID</TableHead>
                 <TableHead>Current Rank</TableHead>
+                <TableHead>Previous Rank</TableHead>
                 <TableHead>Trend</TableHead>
               </TableRow>
             </TableHeader>
@@ -114,6 +115,7 @@ const MiniLeaguePreview = () => {
                     <TableCell className="font-medium">{league.name}</TableCell>
                     <TableCell>{league.id}</TableCell>
                     <TableCell>{league.entry_rank || "N/A"}</TableCell>
+                    <TableCell>{league.entry_last_rank || "N/A"}</TableCell>
                     <TableCell>
                       {league.entry_rank && league.entry_last_rank && (
                         <>
