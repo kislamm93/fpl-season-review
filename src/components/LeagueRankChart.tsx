@@ -1,10 +1,11 @@
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { generateRandomColor } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 type ParticipantHistory = {
   event: number;
@@ -27,6 +28,34 @@ type LeagueRankChartProps = {
 };
 
 const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, error }) => {
+  // State to track which participants are visible in the chart
+  const [visibleParticipants, setVisibleParticipants] = useState<Record<string, boolean>>({});
+
+  // Generate consistent colors for participants
+  const participantColors = useMemo(() => {
+    if (!data) return {};
+    
+    const colors: Record<string, string> = {};
+    data.forEach(participant => {
+      // Generate a consistent color based on the player name
+      colors[participant.player_name] = generateRandomColor();
+    });
+    
+    return colors;
+  }, [data]);
+
+  // Initialize visibility state when data changes
+  React.useEffect(() => {
+    if (data) {
+      const initialVisibility: Record<string, boolean> = {};
+      data.forEach(participant => {
+        // Initially show all participants
+        initialVisibility[participant.player_name] = true;
+      });
+      setVisibleParticipants(initialVisibility);
+    }
+  }, [data]);
+
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
@@ -75,12 +104,20 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     data.forEach(participant => {
       config[participant.player_name] = {
         label: participant.player_name,
-        color: generateRandomColor()
+        color: participantColors[participant.player_name]
       };
     });
     
     return config;
-  }, [data]);
+  }, [data, participantColors]);
+
+  // Toggle visibility of a participant
+  const toggleParticipantVisibility = (participantName: string) => {
+    setVisibleParticipants(prev => ({
+      ...prev,
+      [participantName]: !prev[participantName]
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -129,6 +166,26 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
         <CardTitle>League Rank History</CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Manager selector badges */}
+        <div className="mb-4 flex flex-wrap gap-2">
+          {data.map((participant) => (
+            <Badge
+              key={participant.entry_id}
+              variant={visibleParticipants[participant.player_name] ? "default" : "outline"}
+              className="cursor-pointer"
+              onClick={() => toggleParticipantVisibility(participant.player_name)}
+              style={{
+                backgroundColor: visibleParticipants[participant.player_name] 
+                  ? participantColors[participant.player_name] 
+                  : 'transparent',
+                borderColor: participantColors[participant.player_name],
+                color: visibleParticipants[participant.player_name] ? 'white' : 'inherit'
+              }}
+            >
+              {participant.player_name}
+            </Badge>
+          ))}
+        </div>
         <div className="h-[400px]">
           <ChartContainer config={chartConfig}>
             <LineChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 30 }}>
@@ -138,14 +195,17 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
               <ChartTooltip content={<ChartTooltipContent />} />
               <Legend />
               {data.map((participant) => (
-                <Line
-                  key={participant.entry_id}
-                  type="monotone"
-                  dataKey={participant.player_name}
-                  strokeWidth={2}
-                  activeDot={{ r: 6 }}
-                  dot={{ r: 3 }}
-                />
+                visibleParticipants[participant.player_name] && (
+                  <Line
+                    key={participant.entry_id}
+                    type="monotone"
+                    dataKey={participant.player_name}
+                    stroke={participantColors[participant.player_name]}
+                    strokeWidth={2}
+                    activeDot={{ r: 6 }}
+                    dot={{ r: 3 }}
+                  />
+                )
               ))}
             </LineChart>
           </ChartContainer>
