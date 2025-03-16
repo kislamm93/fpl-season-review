@@ -1,6 +1,5 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { History } from "lucide-react";
 import {
   Sidebar,
@@ -12,29 +11,30 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 
 interface AppSidebarProps {
   managerId: string | null;
 }
 
 const AppSidebar = ({ managerId }: AppSidebarProps) => {
-  if (!managerId) return null;
-
   return (
-    <Sidebar>
+    <Sidebar collapsible="none">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Manager Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Manager History">
-                  <Link to="/manager-history">
-                    <History />
-                    <span>Manager History</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {managerId && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Manager History">
+                    <a href="/manager-history">
+                      <History />
+                      <span>Manager History</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

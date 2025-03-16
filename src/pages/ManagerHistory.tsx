@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -34,7 +33,6 @@ const ManagerHistory = () => {
   
   const pointsChartData = gameweeks.map(gw => ({
     gameweek: `GW ${gw.event}`,
-    points: gw.points,
     totalPoints: gw.total_points,
   }));
 
@@ -44,10 +42,6 @@ const ManagerHistory = () => {
   }));
   
   const pointsConfig = {
-    points: {
-      label: "Gameweek Points",
-      color: "#10b981", // green-500
-    },
     totalPoints: {
       label: "Total Points",
       color: "#6366f1", // indigo-500
@@ -84,7 +78,7 @@ const ManagerHistory = () => {
             <CardHeader>
               <CardTitle>Points Performance</CardTitle>
               <CardDescription>
-                Track your points across gameweeks
+                Track your total points across gameweeks
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -109,15 +103,6 @@ const ManagerHistory = () => {
                     <Tooltip content={<ChartTooltipContent />} />
                     <Line 
                       type="monotone" 
-                      dataKey="points" 
-                      stroke="var(--color-points)" 
-                      strokeWidth={2} 
-                      dot={{ strokeWidth: 2, r: 4 }}
-                      activeDot={{ r: 6 }}
-                      name="Gameweek Points"
-                    />
-                    <Line 
-                      type="monotone" 
                       dataKey="totalPoints" 
                       stroke="var(--color-totalPoints)" 
                       strokeWidth={2} 
@@ -130,15 +115,9 @@ const ManagerHistory = () => {
                 </ChartContainer>
               )}
               <div className="mt-4 flex justify-center">
-                <div className="flex gap-6">
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-[#10b981]"></div>
-                    <span className="text-sm">Gameweek Points</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-[#6366f1]"></div>
-                    <span className="text-sm">Total Points</span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#6366f1]"></div>
+                  <span className="text-sm">Total Points</span>
                 </div>
               </div>
             </CardContent>

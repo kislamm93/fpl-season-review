@@ -33,23 +33,17 @@ const Dashboard = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="flex w-full gap-4">
-        <AppSidebar managerId={managerId} />
-        
-        <div className="flex-1 grid grid-cols-1 gap-8">
-          <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <ManagerIdForm onManagerIdChange={handleManagerIdChange} />
-          </div>
-          
-          {managerId && (
-            <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
-              <PlayersList />
-            </div>
-          )}
-        </div>
+    <div className="flex-1 grid grid-cols-1 gap-8">
+      <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+        <ManagerIdForm onManagerIdChange={handleManagerIdChange} />
       </div>
-    </SidebarProvider>
+      
+      {managerId && (
+        <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+          <PlayersList />
+        </div>
+      )}
+    </div>
   );
 };
 
