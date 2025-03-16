@@ -68,3 +68,45 @@ export interface FplManagerHistory {
   past: any[];
   chips: any[];
 }
+
+// League related types
+export interface FplLeague {
+  id: number;
+  name: string;
+  created: string;
+  closed: boolean;
+  max_entries: null | number;
+  league_type: string;
+  scoring: string;
+  admin_entry: number;
+  start_event: number;
+  code_privacy: string;
+  rank: null | number;
+}
+
+export interface FplLeagueEntry {
+  id: number;
+  entry_name: string;
+  player_name: string;
+  rank: number;
+  last_rank: number;
+  rank_sort: number;
+  total: number;
+  entry: number;
+  entry_id: number;
+}
+
+export interface FplLeagueStandings {
+  league: FplLeague;
+  standings: {
+    has_next: boolean;
+    page: number;
+    results: FplLeagueEntry[];
+  };
+}
+
+export interface FplManagerLeagues {
+  classic: FplLeague[];
+  h2h: FplLeague[];
+  cup: any; // Cup data structure
+}

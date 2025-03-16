@@ -1,6 +1,6 @@
 
 import React from "react";
-import { History } from "lucide-react";
+import { History, Trophy } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -34,6 +34,14 @@ const AppSidebar = ({ managerId }: AppSidebarProps) => {
                   <a href="/manager-history">
                     <History />
                     <span>Manager History</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Mini League Preview">
+                  <a href="/mini-league-preview">
+                    <Trophy />
+                    <span>Mini League Preview</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
