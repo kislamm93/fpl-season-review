@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Zap } from "lucide-react";
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend } from "recharts";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend, ReferenceDot } from "recharts";
 
 const ManagerHistory = () => {
   const navigate = useNavigate();
@@ -37,6 +37,8 @@ const ManagerHistory = () => {
     gameweek: `GW ${gw.event}`,
     points: gw.points,
     overallRank: gw.overall_rank,
+    transferCost: gw.event_transfers_cost,
+    tookHit: gw.event_transfers_cost > 0
   }));
 
   const rankChartData = gameweeks.map(gw => ({
@@ -122,6 +124,14 @@ const ManagerHistory = () => {
                                   <span className="text-muted-foreground">Overall Rank</span>
                                   <span className="font-mono font-medium tabular-nums text-foreground">{payload[0].payload.overallRank.toLocaleString()}</span>
                                 </div>
+                                {payload[0].payload.transferCost > 0 && (
+                                  <div className="flex justify-between text-destructive">
+                                    <span className="flex items-center gap-0.5">
+                                      <Zap className="h-3 w-3" /> Transfer Hit
+                                    </span>
+                                    <span className="font-mono font-medium tabular-nums">-{payload[0].payload.transferCost}pts</span>
+                                  </div>
+                                )}
                               </div>
                             );
                           }
@@ -134,7 +144,18 @@ const ManagerHistory = () => {
                       dataKey="points" 
                       stroke="var(--color-points)" 
                       strokeWidth={2} 
-                      dot={{ strokeWidth: 2, r: 4 }}
+                      dot={(props) => {
+                        const { cx, cy, payload } = props;
+                        if (payload.tookHit) {
+                          return (
+                            <g>
+                              <circle cx={cx} cy={cy} r={4} fill="var(--color-points)" stroke="var(--color-points)" />
+                              <circle cx={cx} cy={cy} r={7} fill="none" stroke="#ef4444" strokeWidth={1.5} />
+                            </g>
+                          );
+                        }
+                        return <circle cx={cx} cy={cy} r={4} fill="var(--color-points)" stroke="var(--color-points)" />;
+                      }}
                       activeDot={{ r: 6 }}
                       name="Gameweek Points"
                     />
@@ -142,10 +163,18 @@ const ManagerHistory = () => {
                   </LineChart>
                 </ChartContainer>
               )}
-              <div className="mt-4 flex justify-center">
+              <div className="mt-4 flex justify-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-[#6366f1]"></div>
                   <span className="text-sm">Gameweek Points</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center">
+                    <div className="h-3 w-3 rounded-full border-[1.5px] border-[#ef4444]"></div>
+                  </div>
+                  <span className="text-sm flex items-center">
+                    <Zap className="h-3 w-3 mr-0.5 text-[#ef4444]" /> Transfer Hit
+                  </span>
                 </div>
               </div>
             </CardContent>
