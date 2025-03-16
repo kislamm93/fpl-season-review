@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useTeamStats } from "@/hooks/useTeamStats";
 import { 
   Table, 
@@ -12,9 +12,29 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { ArrowDown, ArrowUp } from "lucide-react";
+import { TeamStats } from "@/services/teamStatsService";
+
+type SortField = 
+  | 'player_name' 
+  | 'team' 
+  | 'total_points' 
+  | 'selected_by_percent' 
+  | 'goals_scored' 
+  | 'assists' 
+  | 'minutes' 
+  | 'bonus' 
+  | 'expected_goals' 
+  | 'expected_assists' 
+  | 'expected_goal_involvements' 
+  | 'expected_goals_conceded';
+
+type SortDirection = 'asc' | 'desc';
 
 const MyTeamStats = () => {
   const { data: teamStats, isLoading, error } = useTeamStats();
+  const [sortField, setSortField] = useState<SortField>('total_points');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   // Show error toast if there's an error
   React.useEffect(() => {
@@ -60,6 +80,58 @@ const MyTeamStats = () => {
     return teamNames[teamCode] || `Team ${teamCode}`;
   };
 
+  // Function to handle sorting
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Toggle direction if same field
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new field and default to desc for most stats (highest first)
+      setSortField(field);
+      setSortDirection('desc');
+    }
+  };
+
+  // Function to render sort indicator
+  const renderSortIndicator = (field: SortField) => {
+    if (sortField !== field) return null;
+    
+    return sortDirection === 'asc' 
+      ? <ArrowUp className="ml-1 h-4 w-4 inline" /> 
+      : <ArrowDown className="ml-1 h-4 w-4 inline" />;
+  };
+
+  // Function to sort data
+  const sortData = (data: TeamStats[]) => {
+    if (!data) return [];
+    
+    return [...data].sort((a, b) => {
+      let aValue: string | number = a[sortField];
+      let bValue: string | number = b[sortField];
+      
+      // Special handling for numeric string fields
+      if (sortField === 'expected_goals' || 
+          sortField === 'expected_assists' || 
+          sortField === 'expected_goal_involvements' || 
+          sortField === 'expected_goals_conceded' ||
+          sortField === 'points_per_game' ||
+          sortField === 'selected_by_percent') {
+        aValue = parseFloat(aValue as string) || 0;
+        bValue = parseFloat(bValue as string) || 0;
+      }
+      
+      // Sort direction logic
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  };
+
+  // Get sorted data
+  const sortedData = teamStats ? sortData(teamStats) : [];
+
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-6">My Team Stats</h1>
@@ -81,25 +153,80 @@ const MyTeamStats = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Player</TableHead>
-                    <TableHead>Team</TableHead>
-                    <TableHead className="text-right">Points</TableHead>
+                    <TableHead 
+                      className="cursor-pointer" 
+                      onClick={() => handleSort('team')}
+                    >
+                      Team {renderSortIndicator('team')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('total_points')}
+                    >
+                      Points {renderSortIndicator('total_points')}
+                    </TableHead>
                     <TableHead className="text-right">PPG</TableHead>
-                    <TableHead className="text-right">Selected</TableHead>
-                    <TableHead className="text-right">Goals</TableHead>
-                    <TableHead className="text-right">Assists</TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('selected_by_percent')}
+                    >
+                      Selected {renderSortIndicator('selected_by_percent')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('goals_scored')}
+                    >
+                      Goals {renderSortIndicator('goals_scored')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('assists')}
+                    >
+                      Assists {renderSortIndicator('assists')}
+                    </TableHead>
                     <TableHead className="text-right">Clean Sheets</TableHead>
-                    <TableHead className="text-right">Minutes</TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('minutes')}
+                    >
+                      Minutes {renderSortIndicator('minutes')}
+                    </TableHead>
                     <TableHead className="text-right">Yellow Cards</TableHead>
                     <TableHead className="text-right">Red Cards</TableHead>
-                    <TableHead className="text-right">Bonus</TableHead>
-                    <TableHead className="text-right">xG</TableHead>
-                    <TableHead className="text-right">xA</TableHead>
-                    <TableHead className="text-right">xGI</TableHead>
-                    <TableHead className="text-right">xGC</TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('bonus')}
+                    >
+                      Bonus {renderSortIndicator('bonus')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('expected_goals')}
+                    >
+                      xG {renderSortIndicator('expected_goals')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('expected_assists')}
+                    >
+                      xA {renderSortIndicator('expected_assists')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('expected_goal_involvements')}
+                    >
+                      xGI {renderSortIndicator('expected_goal_involvements')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('expected_goals_conceded')}
+                    >
+                      xGC {renderSortIndicator('expected_goals_conceded')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {teamStats?.map((player, index) => (
+                  {sortedData.map((player, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{player.web_name || player.player_name}</TableCell>
                       <TableCell>{getTeamName(player.team)}</TableCell>
