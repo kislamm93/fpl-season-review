@@ -7,19 +7,21 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { generateRandomColor } from "@/lib/utils";
 
 type ParticipantHistory = {
+  event: number;
+  rank: number;
+  total_points: number;
+  points: number;
+};
+
+type Participant = {
   entry_id: number;
   player_name: string;
   team_name: string;
-  history: {
-    event: number;
-    rank: number;
-    total_points: number;
-    points: number;
-  }[];
+  history: ParticipantHistory[];
 };
 
 type LeagueRankChartProps = {
-  data: ParticipantHistory[] | undefined;
+  data: Participant[] | undefined;
   isLoading: boolean;
   error: Error | null;
 };
@@ -31,9 +33,13 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     // Get all unique gameweeks
     const allGameweeks = new Set<number>();
     data.forEach(participant => {
-      participant.history.forEach(gw => {
-        allGameweeks.add(gw.event);
-      });
+      if (Array.isArray(participant.history)) {
+        participant.history.forEach(gw => {
+          if (gw && typeof gw.event === 'number') {
+            allGameweeks.add(gw.event);
+          }
+        });
+      }
     });
     
     const sortedGameweeks = Array.from(allGameweeks).sort((a, b) => a - b);
@@ -45,9 +51,11 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
       };
       
       data.forEach(participant => {
-        const gwHistory = participant.history.find(history => history.event === gw);
-        if (gwHistory) {
-          dataPoint[participant.player_name] = gwHistory.rank;
+        if (Array.isArray(participant.history)) {
+          const gwHistory = participant.history.find(history => history && history.event === gw);
+          if (gwHistory) {
+            dataPoint[participant.player_name] = gwHistory.rank;
+          }
         }
       });
       
@@ -131,7 +139,8 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
                   type="monotone"
                   dataKey={participant.player_name}
                   strokeWidth={2}
-                  activeDot={{ r: 8 }}
+                  activeDot={{ r: 6 }}
+                  dot={{ r: 3 }}
                 />
               ))}
             </LineChart>

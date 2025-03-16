@@ -1,3 +1,4 @@
+
 import { getApiEndpoint } from "@/lib/env";
 import { FplLeagueStandings, FplManagerLeagues } from "@/types/fpl-api";
 
@@ -46,6 +47,7 @@ export const fetchLeagueStandings = async (leagueId: number): Promise<FplLeagueS
 
 /**
  * Fetches all participants and their gameweek history for a league
+ * Returns properly formatted data for charting
  */
 export const fetchLeagueParticipants = async (leagueId: number) => {
   try {
@@ -56,7 +58,19 @@ export const fetchLeagueParticipants = async (leagueId: number) => {
     }
     
     const data = await response.json();
-    return data;
+    
+    // Format the data for the chart
+    if (data && Array.isArray(data.participants)) {
+      return data.participants.map(participant => ({
+        entry_id: participant.entry,
+        player_name: participant.player_name,
+        team_name: participant.entry_name,
+        history: Array.isArray(participant.history) ? participant.history : []
+      }));
+    }
+    
+    console.log('Received participants data:', data);
+    return [];
   } catch (error) {
     console.error("Error fetching league participants:", error);
     throw error;
