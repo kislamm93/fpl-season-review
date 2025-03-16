@@ -101,22 +101,39 @@ const MiniLeaguePreview = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {leagues.map((league) => (
-                <TableRow key={`${league.league_type}-${league.id}`}>
-                  <TableCell className="font-medium">{league.name}</TableCell>
-                  <TableCell>{league.id}</TableCell>
-                  <TableCell>{league.entry_rank || "N/A"}</TableCell>
-                  <TableCell>
-                    {league.entry_rank && league.entry_last_rank && (
-                      league.entry_rank <= league.entry_last_rank ? (
-                        <ArrowUp className="text-green-500" size={16} />
-                      ) : (
-                        <ArrowDown className="text-red-500" size={16} />
-                      )
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {leagues.map((league) => {
+                // Calculate percentage change if both ranks are available
+                let percentChange: string | null = null;
+                if (league.entry_rank && league.entry_last_rank && league.entry_last_rank !== 0) {
+                  const change = ((league.entry_last_rank - league.entry_rank) / league.entry_last_rank) * 100;
+                  percentChange = `${Math.abs(change).toFixed(1)}%`;
+                }
+
+                return (
+                  <TableRow key={`${league.league_type}-${league.id}`}>
+                    <TableCell className="font-medium">{league.name}</TableCell>
+                    <TableCell>{league.id}</TableCell>
+                    <TableCell>{league.entry_rank || "N/A"}</TableCell>
+                    <TableCell>
+                      {league.entry_rank && league.entry_last_rank && (
+                        <>
+                          {league.entry_rank <= league.entry_last_rank ? (
+                            <div className="flex items-center">
+                              <ArrowUp className="text-green-500 mr-1" size={16} />
+                              <span className="text-green-500">{percentChange}</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center">
+                              <ArrowDown className="text-red-500 mr-1" size={16} />
+                              <span className="text-red-500">{percentChange}</span>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

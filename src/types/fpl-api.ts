@@ -82,6 +82,8 @@ export interface FplLeague {
   start_event: number;
   code_privacy: string;
   rank: null | number;
+  entry_rank?: number;  // Current rank in the league
+  entry_last_rank?: number;  // Previous rank in the league
 }
 
 export interface FplLeagueEntry {
