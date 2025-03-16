@@ -27,7 +27,11 @@ type SortField =
   | 'expected_goals' 
   | 'expected_assists' 
   | 'expected_goal_involvements' 
-  | 'expected_goals_conceded';
+  | 'expected_goals_conceded' 
+  | 'clean_sheets'
+  | 'yellow_cards'
+  | 'red_cards'
+  | 'points_per_game';
 
 type SortDirection = 'asc' | 'desc';
 
@@ -165,7 +169,12 @@ const MyTeamStats = () => {
                     >
                       Points {renderSortIndicator('total_points')}
                     </TableHead>
-                    <TableHead className="text-right">PPG</TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('points_per_game')}
+                    >
+                      PPG {renderSortIndicator('points_per_game')}
+                    </TableHead>
                     <TableHead 
                       className="text-right cursor-pointer" 
                       onClick={() => handleSort('selected_by_percent')}
@@ -184,15 +193,30 @@ const MyTeamStats = () => {
                     >
                       Assists {renderSortIndicator('assists')}
                     </TableHead>
-                    <TableHead className="text-right">Clean Sheets</TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('clean_sheets')}
+                    >
+                      Clean Sheets {renderSortIndicator('clean_sheets')}
+                    </TableHead>
                     <TableHead 
                       className="text-right cursor-pointer" 
                       onClick={() => handleSort('minutes')}
                     >
                       Minutes {renderSortIndicator('minutes')}
                     </TableHead>
-                    <TableHead className="text-right">Yellow Cards</TableHead>
-                    <TableHead className="text-right">Red Cards</TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('yellow_cards')}
+                    >
+                      Yellow Cards {renderSortIndicator('yellow_cards')}
+                    </TableHead>
+                    <TableHead 
+                      className="text-right cursor-pointer" 
+                      onClick={() => handleSort('red_cards')}
+                    >
+                      Red Cards {renderSortIndicator('red_cards')}
+                    </TableHead>
                     <TableHead 
                       className="text-right cursor-pointer" 
                       onClick={() => handleSort('bonus')}
