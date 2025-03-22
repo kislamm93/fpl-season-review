@@ -12,6 +12,7 @@ import ManagerHistory from "./pages/ManagerHistory";
 import MiniLeaguePreview from "./pages/MiniLeaguePreview";
 import LeagueDetails from "./pages/LeagueDetails";
 import MyTeamStats from "./pages/MyTeamStats";
+import Search from "./pages/Search";
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 import { useEffect, useState } from "react";
 
@@ -64,6 +65,7 @@ const App = () => {
                   <Route path="/mini-league-preview" element={<MiniLeaguePreview />} />
                   <Route path="/league/:leagueId" element={<LeagueDetails />} />
                   <Route path="/my-team-stats" element={<MyTeamStats />} />
+                  <Route path="/search" element={<Search />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
