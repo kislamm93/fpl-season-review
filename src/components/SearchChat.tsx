@@ -129,9 +129,11 @@ const SearchChat = () => {
                       }`}
                     >
                       {message.sender === "assistant" ? (
-                        <ReactMarkdown className="prose prose-sm dark:prose-invert">
-                          {message.content}
-                        </ReactMarkdown>
+                        <div className="prose prose-sm dark:prose-invert">
+                          <ReactMarkdown>
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
                       ) : (
                         <p>{message.content}</p>
                       )}

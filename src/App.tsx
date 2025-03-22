@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { HelmetProvider } from "react-helmet-async";
 import AppSidebar from "@/components/AppSidebar";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -52,27 +53,29 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <SidebarProvider>
-          <div className="flex w-full min-h-screen">
-            <AppSidebar managerId={managerId} />
-            <main className="flex-1">
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/manager-history" element={<ManagerHistory />} />
-                  <Route path="/mini-league-preview" element={<MiniLeaguePreview />} />
-                  <Route path="/league/:leagueId" element={<LeagueDetails />} />
-                  <Route path="/my-team-stats" element={<MyTeamStats />} />
-                  <Route path="/search" element={<Search />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </main>
-          </div>
-        </SidebarProvider>
+        <HelmetProvider>
+          <Toaster />
+          <Sonner />
+          <SidebarProvider>
+            <div className="flex w-full min-h-screen">
+              <AppSidebar managerId={managerId} />
+              <main className="flex-1">
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/manager-history" element={<ManagerHistory />} />
+                    <Route path="/mini-league-preview" element={<MiniLeaguePreview />} />
+                    <Route path="/league/:leagueId" element={<LeagueDetails />} />
+                    <Route path="/my-team-stats" element={<MyTeamStats />} />
+                    <Route path="/search" element={<Search />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              </main>
+            </div>
+          </SidebarProvider>
+        </HelmetProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
