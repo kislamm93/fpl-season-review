@@ -39,3 +39,60 @@ export const fetchManagerHistory = async (managerId: string): Promise<FplManager
     throw error;
   }
 };
+
+/**
+ * Fetches manager's picks for a specific gameweek
+ */
+export const fetchManagerPicks = async (managerId: string, gameweek: number) => {
+  try {
+    const response = await fetch(getApiEndpoint(`/entry/${managerId}/event/${gameweek}/picks`));
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching manager picks:", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches live scores for a specific gameweek
+ */
+export const fetchLiveScores = async (gameweek: number) => {
+  try {
+    const response = await fetch(getApiEndpoint(`/event/${gameweek}/live`));
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching live scores:", error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches fixtures for a specific event/gameweek
+ */
+export const fetchFixtures = async (gameweek: number) => {
+  try {
+    const response = await fetch(getApiEndpoint(`/event/${gameweek}/fixtures`));
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching fixtures:", error);
+    throw error;
+  }
+};

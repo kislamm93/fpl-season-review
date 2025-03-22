@@ -1,4 +1,6 @@
+
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
+import { getApiEndpoint } from "@/lib/env";
 
 export interface TeamStats {
   player_name: string;
@@ -78,7 +80,8 @@ export const fetchMyTeamStats = async (): Promise<TeamStats[]> => {
     throw new Error("Manager ID not found");
   }
   
-  const response = await fetch(`http://127.0.0.1:8000/my-team/${managerId}/stats`);
+  // Updated endpoint
+  const response = await fetch(getApiEndpoint(`/entry/my-team/${managerId}/stats`));
   
   if (!response.ok) {
     throw new Error(`Failed to fetch team stats: ${response.statusText}`);
