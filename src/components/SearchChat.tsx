@@ -17,7 +17,7 @@ interface Message {
 
 interface SearchResponse {
   response: {
-    text: string;
+    text?: string;
     type: string;
     metadata: {
       length: number;
@@ -82,7 +82,7 @@ const SearchChat = () => {
       // Add assistant message
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: data.response.text,
+        content: data.response.text || (typeof data.response === 'string' ? data.response : JSON.stringify(data.response)),
         sender: "assistant",
         timestamp: new Date(),
       };
@@ -129,7 +129,7 @@ const SearchChat = () => {
                       }`}
                     >
                       {message.sender === "assistant" ? (
-                        <div className="prose prose-sm dark:prose-invert">
+                        <div className="prose prose-sm dark:prose-invert max-w-none">
                           <ReactMarkdown>
                             {message.content}
                           </ReactMarkdown>
