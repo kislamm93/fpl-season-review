@@ -28,6 +28,15 @@ type LeagueRankChartProps = {
   error: Error | null;
 };
 
+// Define vibrant contrasting colors for the first participants
+const CONTRASTING_COLORS = [
+  "#8B5CF6", // Vivid Purple
+  "#D946EF", // Magenta Pink
+  "#F97316", // Bright Orange
+  "#0EA5E9", // Ocean Blue
+  "#ea384c", // Red
+];
+
 const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, error }) => {
   // State to track which participants are visible in the chart
   const [visibleParticipants, setVisibleParticipants] = useState<Record<string, boolean>>({});
@@ -64,14 +73,20 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
     setGameweekRange([gameweeks.min, gameweeks.max]);
   }, [gameweeks.min, gameweeks.max]);
 
-  // Generate consistent colors for participants
+  // Generate consistent colors for participants with contrasting colors for first 5
   const participantColors = useMemo(() => {
     if (!data) return {};
     
     const colors: Record<string, string> = {};
-    data.forEach(participant => {
-      // Generate a consistent color based on the player name
-      colors[participant.player_name] = generateRandomColor(participant.player_name);
+    
+    data.forEach((participant, index) => {
+      if (index < CONTRASTING_COLORS.length) {
+        // Use predefined contrasting colors for first 5 participants
+        colors[participant.player_name] = CONTRASTING_COLORS[index];
+      } else {
+        // Generate a consistent color based on the player name for the rest
+        colors[participant.player_name] = generateRandomColor(participant.player_name);
+      }
     });
     
     return colors;
@@ -242,12 +257,23 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
           />
         </div>
 
-        <div className="h-[400px]">
+        {/* Fixed height container with proper sizing for ResponsiveContainer */}
+        <div className="h-[400px] w-full">
           <ChartContainer config={chartConfig}>
-            <LineChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 30 }}>
+            <LineChart 
+              data={chartData} 
+              margin={{ top: 5, right: 10, left: 0, bottom: 20 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="gameweek" />
-              <YAxis />
+              <XAxis 
+                dataKey="gameweek" 
+                tick={{ fontSize: 12 }}
+                tickMargin={10}
+              />
+              <YAxis 
+                width={30}
+                tick={{ fontSize: 12 }}
+              />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Legend />
               {data.map((participant) => (
