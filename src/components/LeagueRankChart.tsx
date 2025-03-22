@@ -214,55 +214,17 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
   }
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader>
         <CardTitle>League Points History</CardTitle>
       </CardHeader>
-      <CardContent>
-        {/* Manager selector badges */}
-        <div className="mb-4 flex flex-wrap gap-2">
-          {data.map((participant) => (
-            <Badge
-              key={participant.entry_id}
-              variant={visibleParticipants[participant.player_name] ? "default" : "outline"}
-              className="cursor-pointer"
-              onClick={() => toggleParticipantVisibility(participant.player_name)}
-              style={{
-                backgroundColor: visibleParticipants[participant.player_name] 
-                  ? participantColors[participant.player_name] 
-                  : 'transparent',
-                borderColor: participantColors[participant.player_name],
-                color: visibleParticipants[participant.player_name] ? 'white' : 'inherit'
-              }}
-            >
-              {participant.player_name}
-            </Badge>
-          ))}
-        </div>
-
-        {/* Gameweek slider */}
-        <div className="mb-6 space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Gameweek Range</span>
-            <span>GW{gameweekRange[0]} - GW{gameweekRange[1]}</span>
-          </div>
-          <Slider
-            defaultValue={[gameweeks.min, gameweeks.max]}
-            value={gameweekRange}
-            min={gameweeks.min}
-            max={gameweeks.max}
-            step={1}
-            onValueChange={handleGameweekRangeChange}
-            className="py-2"
-          />
-        </div>
-
-        {/* Fixed height container with proper sizing for ResponsiveContainer */}
+      <CardContent className="space-y-6">
+        {/* Chart container - now comes before the filters */}
         <div className="h-[400px] w-full">
-          <ChartContainer config={chartConfig}>
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart 
               data={chartData} 
-              margin={{ top: 5, right: 10, left: 0, bottom: 20 }}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
@@ -271,10 +233,18 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
                 tickMargin={10}
               />
               <YAxis 
-                width={30}
+                width={40}
                 tick={{ fontSize: 12 }}
               />
-              <ChartTooltip content={<ChartTooltipContent />} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '8px' 
+                }}
+                itemStyle={{ padding: '2px 0' }}
+              />
               <Legend />
               {data.map((participant) => (
                 visibleParticipants[participant.player_name] && (
@@ -290,7 +260,48 @@ const LeagueRankChart: React.FC<LeagueRankChartProps> = ({ data, isLoading, erro
                 )
               ))}
             </LineChart>
-          </ChartContainer>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Filters section - now below the chart */}
+        <div className="pt-2 border-t">
+          {/* Gameweek slider */}
+          <div className="mb-4 space-y-2">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>Gameweek Range</span>
+              <span>GW{gameweekRange[0]} - GW{gameweekRange[1]}</span>
+            </div>
+            <Slider
+              defaultValue={[gameweeks.min, gameweeks.max]}
+              value={gameweekRange}
+              min={gameweeks.min}
+              max={gameweeks.max}
+              step={1}
+              onValueChange={handleGameweekRangeChange}
+              className="py-2"
+            />
+          </div>
+
+          {/* Manager selector badges */}
+          <div className="flex flex-wrap gap-2">
+            {data.map((participant) => (
+              <Badge
+                key={participant.entry_id}
+                variant={visibleParticipants[participant.player_name] ? "default" : "outline"}
+                className="cursor-pointer"
+                onClick={() => toggleParticipantVisibility(participant.player_name)}
+                style={{
+                  backgroundColor: visibleParticipants[participant.player_name] 
+                    ? participantColors[participant.player_name] 
+                    : 'transparent',
+                  borderColor: participantColors[participant.player_name],
+                  color: visibleParticipants[participant.player_name] ? 'white' : 'inherit'
+                }}
+              >
+                {participant.player_name}
+              </Badge>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>
