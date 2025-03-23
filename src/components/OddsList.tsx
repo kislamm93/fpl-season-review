@@ -8,12 +8,119 @@ import OddsListItem from "./OddsListItem";
 import { OddsData } from "@/types/odds";
 
 const fetchOdds = async (): Promise<OddsData[]> => {
-  const response = await fetch(getApiEndpoint("/odds/upcoming"));
-  if (!response.ok) {
-    throw new Error("Failed to fetch odds data");
+  // For development, use the local endpoint
+  // For production, use a mock data since the fantasy.premierleague.com API doesn't have this endpoint
+  const isDevelopment = import.meta.env.DEV;
+  
+  if (isDevelopment) {
+    const response = await fetch(getApiEndpoint("/odds/upcoming"));
+    if (!response.ok) {
+      throw new Error("Failed to fetch odds data");
+    }
+    return response.json();
+  } else {
+    // Mock data for production
+    return mockUpcomingOdds;
   }
-  return response.json();
 };
+
+// Mock data for when in production
+const mockUpcomingOdds: OddsData[] = [
+  {
+    id: "1",
+    sport_key: "soccer_epl",
+    sport_title: "EPL",
+    commence_time: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
+    home_team: "Manchester United",
+    away_team: "Liverpool",
+    bookmakers: [
+      {
+        key: "betfair",
+        title: "Betfair",
+        last_update: new Date().toISOString(),
+        markets: [
+          {
+            key: "h2h",
+            last_update: new Date().toISOString(),
+            outcomes: [
+              { name: "Manchester United", price: 3.5, implied_probability: 28.6 },
+              { name: "Liverpool", price: 2.0, implied_probability: 50.0 },
+              { name: "Draw", price: 3.7, implied_probability: 27.0 }
+            ]
+          }
+        ]
+      },
+      {
+        key: "williamhill",
+        title: "William Hill",
+        last_update: new Date().toISOString(),
+        markets: [
+          {
+            key: "h2h",
+            last_update: new Date().toISOString(),
+            outcomes: [
+              { name: "Manchester United", price: 3.3, implied_probability: 30.3 },
+              { name: "Liverpool", price: 2.1, implied_probability: 47.6 },
+              { name: "Draw", price: 3.5, implied_probability: 28.6 }
+            ]
+          }
+        ]
+      }
+    ],
+    combined_market_odds: {
+      "Manchester United": { price: 3.4, implied_probability: 29.4 },
+      "Liverpool": { price: 2.05, implied_probability: 48.8 },
+      "Draw": { price: 3.6, implied_probability: 27.8 }
+    }
+  },
+  {
+    id: "2",
+    sport_key: "soccer_epl",
+    sport_title: "EPL",
+    commence_time: new Date(Date.now() + 172800000).toISOString(), // Day after tomorrow
+    home_team: "Arsenal",
+    away_team: "Manchester City",
+    bookmakers: [
+      {
+        key: "betfair",
+        title: "Betfair",
+        last_update: new Date().toISOString(),
+        markets: [
+          {
+            key: "h2h",
+            last_update: new Date().toISOString(),
+            outcomes: [
+              { name: "Arsenal", price: 2.7, implied_probability: 37.0 },
+              { name: "Manchester City", price: 2.5, implied_probability: 40.0 },
+              { name: "Draw", price: 3.4, implied_probability: 29.4 }
+            ]
+          }
+        ]
+      },
+      {
+        key: "williamhill",
+        title: "William Hill",
+        last_update: new Date().toISOString(),
+        markets: [
+          {
+            key: "h2h",
+            last_update: new Date().toISOString(),
+            outcomes: [
+              { name: "Arsenal", price: 2.8, implied_probability: 35.7 },
+              { name: "Manchester City", price: 2.4, implied_probability: 41.7 },
+              { name: "Draw", price: 3.5, implied_probability: 28.6 }
+            ]
+          }
+        ]
+      }
+    ],
+    combined_market_odds: {
+      "Arsenal": { price: 2.75, implied_probability: 36.4 },
+      "Manchester City": { price: 2.45, implied_probability: 40.8 },
+      "Draw": { price: 3.45, implied_probability: 29.0 }
+    }
+  }
+];
 
 const OddsList = () => {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);

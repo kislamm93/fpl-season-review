@@ -54,50 +54,50 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
             </Button>
           </CollapsibleTrigger>
           
-          <div className="px-3 py-2 flex flex-col border-y">
-            {/* Teams layout with less space */}
-            <div className="flex items-center justify-center space-x-1">
-              <div className="flex items-center justify-end flex-1">
-                <span className="font-medium text-sm md:text-base mr-2">{homeDisplayName}</span>
+          <div className="px-2 py-2 flex flex-col border-y">
+            {/* Ultra compact teams layout */}
+            <div className="flex items-center justify-center">
+              <div className="flex items-center flex-1 justify-end mr-1">
+                <span className="font-medium text-sm truncate max-w-[90px]">{homeDisplayName}</span>
                 {homeTeamLogo && (
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-6 w-6 ml-1">
                     <AvatarImage src={homeTeamLogo} alt={match.home_team} />
                     <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
                   </Avatar>
                 )}
               </div>
               
-              <div className="mx-2 flex-shrink-0">
-                <div className="text-xs font-medium bg-secondary/50 rounded-full w-8 h-8 flex items-center justify-center">VS</div>
+              <div className="flex-shrink-0 mx-1">
+                <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center">VS</div>
               </div>
               
-              <div className="flex items-center justify-start flex-1">
+              <div className="flex items-center flex-1 justify-start ml-1">
                 {awayTeamLogo && (
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-6 w-6 mr-1">
                     <AvatarImage src={awayTeamLogo} alt={match.away_team} />
                     <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
                   </Avatar>
                 )}
-                <span className="font-medium text-sm md:text-base ml-2">{awayDisplayName}</span>
+                <span className="font-medium text-sm truncate max-w-[90px]">{awayDisplayName}</span>
               </div>
             </div>
             
-            {/* Probability percentages */}
-            <div className="flex justify-center items-center space-x-6 mt-2">
+            {/* Probability percentages - more compact */}
+            <div className="flex justify-center items-center space-x-4 mt-1">
               {homeOdds && (
-                <Badge variant="outline" className="bg-primary/10 text-xs">
+                <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5">
                   {homeOdds.implied_probability.toFixed(1)}%
                 </Badge>
               )}
               
               {drawOdds && (
-                <Badge variant="outline" className="bg-primary/5 text-xs">
+                <Badge variant="outline" className="bg-primary/5 text-xs py-0 h-5">
                   {drawOdds.implied_probability.toFixed(1)}%
                 </Badge>
               )}
               
               {awayOdds && (
-                <Badge variant="outline" className="bg-primary/10 text-xs">
+                <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5">
                   {awayOdds.implied_probability.toFixed(1)}%
                 </Badge>
               )}
