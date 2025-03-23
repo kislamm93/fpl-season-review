@@ -2,6 +2,7 @@
 export interface TeamInfo {
   team_id: number;
   name: string;
+  shortName?: string;
 }
 
 export const EPL_TEAMS: TeamInfo[] = [
@@ -17,24 +18,30 @@ export const EPL_TEAMS: TeamInfo[] = [
   { team_id: 40, name: "Ipswich" },
   { team_id: 13, name: "Leicester" },
   { team_id: 14, name: "Liverpool" },
-  { team_id: 43, name: "Man City" },
-  { team_id: 1, name: "Man Utd" },
-  { team_id: 4, name: "Newcastle" },
-  { team_id: 17, name: "Nott'm Forest" },
+  { team_id: 43, name: "Manchester City", shortName: "Man City" },
+  { team_id: 1, name: "Manchester United", shortName: "Man Utd" },
+  { team_id: 4, name: "Newcastle United", shortName: "Newcastle" },
+  { team_id: 17, name: "Nottingham Forest", shortName: "Nott'm Forest" },
   { team_id: 20, name: "Southampton" },
-  { team_id: 6, name: "Spurs" },
+  { team_id: 6, name: "Tottenham Hotspur", shortName: "Spurs" },
   { team_id: 21, name: "West Ham" },
-  { team_id: 39, name: "Wolves" }
+  { team_id: 39, name: "Wolverhampton Wanderers", shortName: "Wolves" }
 ];
 
 export const getTeamById = (teamName: string): TeamInfo | undefined => {
   // First try exact match
   let team = EPL_TEAMS.find(team => team.name === teamName);
   
-  // If no exact match, try case-insensitive match
+  // If no exact match, try with shortName
+  if (!team) {
+    team = EPL_TEAMS.find(team => team.shortName === teamName);
+  }
+  
+  // If still no match, try case-insensitive match
   if (!team) {
     team = EPL_TEAMS.find(team => 
-      team.name.toLowerCase() === teamName.toLowerCase()
+      team.name.toLowerCase() === teamName.toLowerCase() ||
+      (team.shortName && team.shortName.toLowerCase() === teamName.toLowerCase())
     );
   }
   
@@ -42,7 +49,9 @@ export const getTeamById = (teamName: string): TeamInfo | undefined => {
   if (!team) {
     team = EPL_TEAMS.find(team => 
       team.name.toLowerCase().includes(teamName.toLowerCase()) || 
-      teamName.toLowerCase().includes(team.name.toLowerCase())
+      teamName.toLowerCase().includes(team.name.toLowerCase()) ||
+      (team.shortName && team.shortName.toLowerCase().includes(teamName.toLowerCase())) ||
+      (team.shortName && teamName.toLowerCase().includes(team.shortName.toLowerCase()))
     );
   }
   
@@ -56,4 +65,12 @@ export const getTeamLogoUrl = (teamName: string): string => {
     return `https://resources.premierleague.com/premierleague/badges/t${team.team_id}.png`;
   }
   return '';
+};
+
+export const getTeamDisplayName = (teamName: string): string => {
+  const team = getTeamById(teamName);
+  if (team) {
+    return team.shortName || team.name;
+  }
+  return teamName;
 };

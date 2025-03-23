@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { OddsData } from "@/types/odds";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getTeamLogoUrl } from "@/lib/teamData";
+import { getTeamLogoUrl, getTeamDisplayName } from "@/lib/teamData";
 
 interface OddsListItemProps {
   match: OddsData;
@@ -26,6 +27,9 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
 
   const homeTeamLogo = getTeamLogoUrl(match.home_team);
   const awayTeamLogo = getTeamLogoUrl(match.away_team);
+  
+  const homeDisplayName = getTeamDisplayName(match.home_team);
+  const awayDisplayName = getTeamDisplayName(match.away_team);
 
   return (
     <Card className="overflow-hidden">
@@ -50,41 +54,41 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
             </Button>
           </CollapsibleTrigger>
           
-          <div className="px-3 py-2 flex justify-between items-center border-y text-sm">
-            <div className="flex-1 flex items-center justify-end gap-2">
-              <span className="font-medium">{match.home_team}</span>
+          <div className="px-3 py-2 flex justify-between items-center border-y">
+            <div className="flex items-center space-x-2">
+              <span className="font-medium text-sm md:text-base">{homeDisplayName}</span>
               {homeTeamLogo && (
-                <Avatar className="h-6 w-6">
+                <Avatar className="h-8 w-8">
                   <AvatarImage src={homeTeamLogo} alt={match.home_team} />
-                  <AvatarFallback>{match.home_team.slice(0, 2)}</AvatarFallback>
+                  <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
                 </Avatar>
               )}
               {homeOdds && (
-                <Badge variant="outline" className="bg-primary/10 text-xs px-1.5 py-0">
+                <Badge variant="outline" className="bg-primary/10 text-xs">
                   {homeOdds.price.toFixed(2)}
                 </Badge>
               )}
             </div>
             
-            <div className="flex flex-col items-center px-4">
-              <div className="text-xs text-muted-foreground">VS</div>
+            <div className="flex flex-col items-center px-2">
+              <div className="text-xs font-medium">VS</div>
               {drawOdds && (
-                <Badge variant="outline" className="bg-primary/5 text-xs px-1.5 py-0 mt-1">
+                <Badge variant="outline" className="bg-primary/5 text-xs mt-1">
                   {drawOdds.price.toFixed(2)}
                 </Badge>
               )}
             </div>
             
-            <div className="flex-1 flex items-center justify-start gap-2">
+            <div className="flex items-center space-x-2">
               {awayTeamLogo && (
-                <Avatar className="h-6 w-6">
+                <Avatar className="h-8 w-8">
                   <AvatarImage src={awayTeamLogo} alt={match.away_team} />
-                  <AvatarFallback>{match.away_team.slice(0, 2)}</AvatarFallback>
+                  <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
                 </Avatar>
               )}
-              <span className="font-medium">{match.away_team}</span>
+              <span className="font-medium text-sm md:text-base">{awayDisplayName}</span>
               {awayOdds && (
-                <Badge variant="outline" className="bg-primary/10 text-xs px-1.5 py-0">
+                <Badge variant="outline" className="bg-primary/10 text-xs">
                   {awayOdds.price.toFixed(2)}
                 </Badge>
               )}
@@ -100,9 +104,9 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
                     <TableRow>
                       <TableHead className="text-xs">Bookmaker</TableHead>
                       <TableHead className="text-xs">Last Updated</TableHead>
-                      <TableHead className="text-right text-xs">{match.home_team}</TableHead>
+                      <TableHead className="text-right text-xs">{homeDisplayName}</TableHead>
                       <TableHead className="text-right text-xs">Draw</TableHead>
-                      <TableHead className="text-right text-xs">{match.away_team}</TableHead>
+                      <TableHead className="text-right text-xs">{awayDisplayName}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
