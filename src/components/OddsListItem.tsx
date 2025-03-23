@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -52,61 +51,42 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
           </CollapsibleTrigger>
           
           <div className="px-3 py-2 flex justify-between items-center border-y text-sm">
-            <div className="flex-1 text-right pr-2">
-              <div className="font-medium flex items-center justify-end gap-1">
-                {homeTeamLogo && (
-                  <Avatar className="h-5 w-5 mr-1">
-                    <AvatarImage src={homeTeamLogo} alt={match.home_team} />
-                    <AvatarFallback>{match.home_team.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
-                )}
-                {match.home_team}
-              </div>
+            <div className="flex-1 flex items-center justify-end gap-2">
+              <span className="font-medium">{match.home_team}</span>
+              {homeTeamLogo && (
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={homeTeamLogo} alt={match.home_team} />
+                  <AvatarFallback>{match.home_team.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+              )}
               {homeOdds && (
-                <div className="flex justify-end items-center gap-1 mt-1">
-                  <Badge variant="outline" className="bg-primary/10 text-xs px-1.5 py-0">
-                    {homeOdds.price.toFixed(2)}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {homeOdds.implied_probability.toFixed(1)}%
-                  </span>
-                </div>
+                <Badge variant="outline" className="bg-primary/10 text-xs px-1.5 py-0">
+                  {homeOdds.price.toFixed(2)}
+                </Badge>
               )}
             </div>
             
-            <div className="flex flex-col items-center px-2">
+            <div className="flex flex-col items-center px-4">
               <div className="text-xs text-muted-foreground">VS</div>
               {drawOdds && (
-                <div className="flex flex-col items-center">
-                  <Badge variant="outline" className="bg-primary/5 text-xs px-1.5 py-0 mt-1">
-                    {drawOdds.price.toFixed(2)}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {drawOdds.implied_probability.toFixed(1)}%
-                  </span>
-                </div>
+                <Badge variant="outline" className="bg-primary/5 text-xs px-1.5 py-0 mt-1">
+                  {drawOdds.price.toFixed(2)}
+                </Badge>
               )}
             </div>
             
-            <div className="flex-1 text-left pl-2">
-              <div className="font-medium flex items-center gap-1">
-                {awayTeamLogo && (
-                  <Avatar className="h-5 w-5 mr-1">
-                    <AvatarImage src={awayTeamLogo} alt={match.away_team} />
-                    <AvatarFallback>{match.away_team.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
-                )}
-                {match.away_team}
-              </div>
+            <div className="flex-1 flex items-center justify-start gap-2">
+              {awayTeamLogo && (
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={awayTeamLogo} alt={match.away_team} />
+                  <AvatarFallback>{match.away_team.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+              )}
+              <span className="font-medium">{match.away_team}</span>
               {awayOdds && (
-                <div className="flex items-center gap-1 mt-1">
-                  <Badge variant="outline" className="bg-primary/10 text-xs px-1.5 py-0">
-                    {awayOdds.price.toFixed(2)}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    {awayOdds.implied_probability.toFixed(1)}%
-                  </span>
-                </div>
+                <Badge variant="outline" className="bg-primary/10 text-xs px-1.5 py-0">
+                  {awayOdds.price.toFixed(2)}
+                </Badge>
               )}
             </div>
           </div>

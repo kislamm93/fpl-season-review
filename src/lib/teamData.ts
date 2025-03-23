@@ -28,12 +28,31 @@ export const EPL_TEAMS: TeamInfo[] = [
 ];
 
 export const getTeamById = (teamName: string): TeamInfo | undefined => {
-  return EPL_TEAMS.find(team => team.name === teamName || team.name.includes(teamName) || teamName.includes(team.name));
+  // First try exact match
+  let team = EPL_TEAMS.find(team => team.name === teamName);
+  
+  // If no exact match, try case-insensitive match
+  if (!team) {
+    team = EPL_TEAMS.find(team => 
+      team.name.toLowerCase() === teamName.toLowerCase()
+    );
+  }
+  
+  // If still no match, try includes
+  if (!team) {
+    team = EPL_TEAMS.find(team => 
+      team.name.toLowerCase().includes(teamName.toLowerCase()) || 
+      teamName.toLowerCase().includes(team.name.toLowerCase())
+    );
+  }
+  
+  return team;
 };
 
 export const getTeamLogoUrl = (teamName: string): string => {
   const team = getTeamById(teamName);
   if (team) {
+    // Use team_id to construct the Premier League badge URL
     return `https://resources.premierleague.com/premierleague/badges/t${team.team_id}.png`;
   }
   return '';
