@@ -16,6 +16,7 @@ import MyTeamStats from "./pages/MyTeamStats";
 import Search from "./pages/Search";
 import MarketOdd from "./pages/MarketOdd";
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
@@ -60,7 +61,10 @@ const App = () => {
           <SidebarProvider>
             <div className="flex w-full min-h-screen">
               <AppSidebar managerId={managerId} />
-              <main className="flex-1">
+              <main className="flex-1 relative">
+                <div className="absolute top-4 right-4 z-10">
+                  <ThemeToggle />
+                </div>
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Index />} />
