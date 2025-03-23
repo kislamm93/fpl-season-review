@@ -5,26 +5,26 @@ export interface TeamInfo {
 }
 
 export const EPL_TEAMS: TeamInfo[] = [
-  { team_id: 1, name: "Arsenal" },
-  { team_id: 2, name: "Aston Villa" },
-  { team_id: 3, name: "Bournemouth" },
-  { team_id: 4, name: "Brentford" },
-  { team_id: 5, name: "Brighton" },
-  { team_id: 6, name: "Burnley" },
-  { team_id: 7, name: "Chelsea" },
-  { team_id: 8, name: "Crystal Palace" },
-  { team_id: 9, name: "Everton" },
-  { team_id: 10, name: "Fulham" },
-  { team_id: 11, name: "Liverpool" },
-  { team_id: 12, name: "Luton" },
-  { team_id: 13, name: "Man City" },
-  { team_id: 14, name: "Man Utd" },
-  { team_id: 15, name: "Newcastle" },
-  { team_id: 16, name: "Nott'm Forest" },
-  { team_id: 17, name: "Sheffield Utd" },
-  { team_id: 18, name: "Spurs" },
-  { team_id: 19, name: "West Ham" },
-  { team_id: 20, name: "Wolves" }
+  { team_id: 3, name: "Arsenal" },
+  { team_id: 7, name: "Aston Villa" },
+  { team_id: 91, name: "Bournemouth" },
+  { team_id: 94, name: "Brentford" },
+  { team_id: 36, name: "Brighton" },
+  { team_id: 8, name: "Chelsea" },
+  { team_id: 31, name: "Crystal Palace" },
+  { team_id: 11, name: "Everton" },
+  { team_id: 54, name: "Fulham" },
+  { team_id: 40, name: "Ipswich" },
+  { team_id: 13, name: "Leicester" },
+  { team_id: 14, name: "Liverpool" },
+  { team_id: 43, name: "Man City" },
+  { team_id: 1, name: "Man Utd" },
+  { team_id: 4, name: "Newcastle" },
+  { team_id: 17, name: "Nott'm Forest" },
+  { team_id: 20, name: "Southampton" },
+  { team_id: 6, name: "Spurs" },
+  { team_id: 21, name: "West Ham" },
+  { team_id: 39, name: "Wolves" }
 ];
 
 export const getTeamById = (teamName: string): TeamInfo | undefined => {
