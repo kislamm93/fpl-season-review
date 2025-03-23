@@ -55,9 +55,9 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
           </CollapsibleTrigger>
           
           <div className="px-3 py-2 flex flex-col border-y">
-            {/* Teams and logos with fixed width grid */}
-            <div className="grid grid-cols-3 items-center mb-2">
-              <div className="flex items-center justify-end">
+            {/* Teams and logos with more compact layout */}
+            <div className="grid grid-cols-5 items-center mb-2">
+              <div className="col-span-2 flex items-center justify-end">
                 <span className="font-medium text-sm md:text-base mr-2">{homeDisplayName}</span>
                 {homeTeamLogo && (
                   <Avatar className="h-10 w-10">
@@ -68,10 +68,10 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
               </div>
               
               <div className="flex justify-center items-center">
-                <div className="text-xs font-medium px-3 py-1 bg-secondary/50 rounded-full w-8 text-center">VS</div>
+                <div className="text-xs font-medium px-2 py-1 bg-secondary/50 rounded-full w-8 text-center">VS</div>
               </div>
               
-              <div className="flex items-center justify-start">
+              <div className="col-span-2 flex items-center justify-start">
                 {awayTeamLogo && (
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={awayTeamLogo} alt={match.away_team} />
@@ -82,32 +82,23 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
               </div>
             </div>
             
-            {/* Odds below */}
-            <div className="flex justify-center items-center space-x-3 mt-1">
+            {/* Only show probability percentages */}
+            <div className="flex justify-center items-center space-x-6 mt-1">
               {homeOdds && (
                 <Badge variant="outline" className="bg-primary/10 text-xs">
-                  {homeOdds.price.toFixed(2)}
-                  <span className="text-xs text-muted-foreground ml-1">
-                    ({homeOdds.implied_probability.toFixed(1)}%)
-                  </span>
+                  {homeOdds.implied_probability.toFixed(1)}%
                 </Badge>
               )}
               
               {drawOdds && (
                 <Badge variant="outline" className="bg-primary/5 text-xs">
-                  {drawOdds.price.toFixed(2)}
-                  <span className="text-xs text-muted-foreground ml-1">
-                    ({drawOdds.implied_probability.toFixed(1)}%)
-                  </span>
+                  {drawOdds.implied_probability.toFixed(1)}%
                 </Badge>
               )}
               
               {awayOdds && (
                 <Badge variant="outline" className="bg-primary/10 text-xs">
-                  {awayOdds.price.toFixed(2)}
-                  <span className="text-xs text-muted-foreground ml-1">
-                    ({awayOdds.implied_probability.toFixed(1)}%)
-                  </span>
+                  {awayOdds.implied_probability.toFixed(1)}%
                 </Badge>
               )}
             </div>
@@ -148,9 +139,8 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
                           <TableCell className="text-right text-xs py-2">
                             {homeOutcome && (
                               <div>
-                                <span className="font-medium">{homeOutcome.price.toFixed(2)}</span>
-                                <span className="text-xs text-muted-foreground ml-1">
-                                  ({homeOutcome.implied_probability.toFixed(1)}%)
+                                <span className="text-xs text-muted-foreground">
+                                  {homeOutcome.implied_probability.toFixed(1)}%
                                 </span>
                               </div>
                             )}
@@ -158,9 +148,8 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
                           <TableCell className="text-right text-xs py-2">
                             {drawOutcome && (
                               <div>
-                                <span className="font-medium">{drawOutcome.price.toFixed(2)}</span>
-                                <span className="text-xs text-muted-foreground ml-1">
-                                  ({drawOutcome.implied_probability.toFixed(1)}%)
+                                <span className="text-xs text-muted-foreground">
+                                  {drawOutcome.implied_probability.toFixed(1)}%
                                 </span>
                               </div>
                             )}
@@ -168,9 +157,8 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
                           <TableCell className="text-right text-xs py-2">
                             {awayOutcome && (
                               <div>
-                                <span className="font-medium">{awayOutcome.price.toFixed(2)}</span>
-                                <span className="text-xs text-muted-foreground ml-1">
-                                  ({awayOutcome.implied_probability.toFixed(1)}%)
+                                <span className="text-xs text-muted-foreground">
+                                  {awayOutcome.implied_probability.toFixed(1)}%
                                 </span>
                               </div>
                             )}
