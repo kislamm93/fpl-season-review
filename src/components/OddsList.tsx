@@ -17,10 +17,16 @@ const fetchOdds = async (): Promise<OddsData[]> => {
 };
 
 const OddsList = () => {
+  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+  
   const { data, isLoading, error } = useQuery({
     queryKey: ["upcoming-odds"],
     queryFn: fetchOdds,
   });
+
+  const handleItemToggle = (matchId: string) => {
+    setExpandedItem(expandedItem === matchId ? null : matchId);
+  };
 
   if (isLoading) {
     return (
@@ -46,7 +52,12 @@ const OddsList = () => {
     <div className="space-y-4">
       {data && data.length > 0 ? (
         data.map((match) => (
-          <OddsListItem key={match.id} match={match} />
+          <OddsListItem 
+            key={match.id} 
+            match={match} 
+            isExpanded={expandedItem === match.id}
+            onToggle={() => handleItemToggle(match.id)}
+          />
         ))
       ) : (
         <Card className="my-4">

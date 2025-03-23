@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -7,21 +7,26 @@ import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { OddsData } from "@/types/odds";
+import { Badge } from "@/components/ui/badge";
 
 interface OddsListItemProps {
   match: OddsData;
+  isExpanded: boolean;
+  onToggle: () => void;
 }
 
-const OddsListItem = ({ match }: OddsListItemProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
   const matchDate = new Date(match.commence_time);
   const formattedDate = format(matchDate, "MMM d, yyyy");
   const formattedTime = format(matchDate, "h:mm a");
 
+  const homeOdds = match.combined_market_odds?.[match.home_team];
+  const awayOdds = match.combined_market_odds?.[match.away_team];
+  const drawOdds = match.combined_market_odds?.["Draw"];
+
   return (
     <Card className="overflow-hidden">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Collapsible open={isExpanded} onOpenChange={onToggle}>
         <CardContent className="p-0">
           <CollapsibleTrigger asChild>
             <Button
@@ -36,7 +41,7 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                 </div>
               </div>
             </Button>
@@ -45,14 +50,44 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
           <div className="px-4 py-4 flex justify-between items-center border-y">
             <div className="flex-1 text-right pr-3">
               <div className="font-semibold text-lg">{match.home_team}</div>
+              {homeOdds && (
+                <div className="flex justify-end items-center gap-2 mt-1">
+                  <Badge variant="outline" className="bg-primary/10">
+                    {homeOdds.price.toFixed(2)}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {homeOdds.implied_probability.toFixed(1)}%
+                  </span>
+                </div>
+              )}
             </div>
             
             <div className="flex flex-col items-center px-4">
-              <div className="text-xs text-muted-foreground">VS</div>
+              <div className="text-xs text-muted-foreground mb-1">VS</div>
+              {drawOdds && (
+                <div className="flex flex-col items-center">
+                  <Badge variant="outline" className="bg-primary/5">
+                    Draw: {drawOdds.price.toFixed(2)}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground mt-1">
+                    {drawOdds.implied_probability.toFixed(1)}%
+                  </span>
+                </div>
+              )}
             </div>
             
             <div className="flex-1 text-left pl-3">
               <div className="font-semibold text-lg">{match.away_team}</div>
+              {awayOdds && (
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline" className="bg-primary/10">
+                    {awayOdds.price.toFixed(2)}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {awayOdds.implied_probability.toFixed(1)}%
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           

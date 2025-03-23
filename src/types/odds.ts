@@ -18,6 +18,13 @@ export interface Bookmaker {
   markets: Market[];
 }
 
+export interface CombinedMarketOdds {
+  [team: string]: {
+    price: number;
+    implied_probability: number;
+  };
+}
+
 export interface OddsData {
   id: string;
   sport_key: string;
@@ -26,4 +33,5 @@ export interface OddsData {
   home_team: string;
   away_team: string;
   bookmakers: Bookmaker[];
+  combined_market_odds?: CombinedMarketOdds;
 }
