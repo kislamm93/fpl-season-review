@@ -8,6 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { OddsData } from "@/types/odds";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getTeamLogoUrl } from "@/lib/teamData";
 
 interface OddsListItemProps {
   match: OddsData;
@@ -22,6 +24,9 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
   const homeOdds = match.combined_market_odds?.[match.home_team];
   const awayOdds = match.combined_market_odds?.[match.away_team];
   const drawOdds = match.combined_market_odds?.["Draw"];
+
+  const homeTeamLogo = getTeamLogoUrl(match.home_team);
+  const awayTeamLogo = getTeamLogoUrl(match.away_team);
 
   return (
     <Card className="overflow-hidden">
@@ -48,7 +53,15 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
           
           <div className="px-3 py-2 flex justify-between items-center border-y text-sm">
             <div className="flex-1 text-right pr-2">
-              <div className="font-medium">{match.home_team}</div>
+              <div className="font-medium flex items-center justify-end gap-1">
+                {homeTeamLogo && (
+                  <Avatar className="h-5 w-5 mr-1">
+                    <AvatarImage src={homeTeamLogo} alt={match.home_team} />
+                    <AvatarFallback>{match.home_team.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                )}
+                {match.home_team}
+              </div>
               {homeOdds && (
                 <div className="flex justify-end items-center gap-1 mt-1">
                   <Badge variant="outline" className="bg-primary/10 text-xs px-1.5 py-0">
@@ -76,7 +89,15 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
             </div>
             
             <div className="flex-1 text-left pl-2">
-              <div className="font-medium">{match.away_team}</div>
+              <div className="font-medium flex items-center gap-1">
+                {awayTeamLogo && (
+                  <Avatar className="h-5 w-5 mr-1">
+                    <AvatarImage src={awayTeamLogo} alt={match.away_team} />
+                    <AvatarFallback>{match.away_team.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                )}
+                {match.away_team}
+              </div>
               {awayOdds && (
                 <div className="flex items-center gap-1 mt-1">
                   <Badge variant="outline" className="bg-primary/10 text-xs px-1.5 py-0">
