@@ -54,8 +54,9 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
             </Button>
           </CollapsibleTrigger>
           
-          <div className="px-3 py-2 flex justify-between items-center border-y">
-            <div className="flex items-center space-x-2">
+          <div className="px-3 py-2 flex flex-col border-y">
+            {/* Teams and logos */}
+            <div className="flex justify-center items-center space-x-3 mb-2">
               <span className="font-medium text-sm md:text-base">{homeDisplayName}</span>
               {homeTeamLogo && (
                 <Avatar className="h-10 w-10">
@@ -63,6 +64,22 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
                   <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
                 </Avatar>
               )}
+              
+              <div className="flex flex-col items-center px-2">
+                <div className="text-xs font-medium">VS</div>
+              </div>
+              
+              {awayTeamLogo && (
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={awayTeamLogo} alt={match.away_team} />
+                  <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+              )}
+              <span className="font-medium text-sm md:text-base">{awayDisplayName}</span>
+            </div>
+            
+            {/* Odds below */}
+            <div className="flex justify-center items-center space-x-3 mt-1">
               {homeOdds && (
                 <Badge variant="outline" className="bg-primary/10 text-xs">
                   {homeOdds.price.toFixed(2)}
@@ -71,28 +88,16 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
                   </span>
                 </Badge>
               )}
-            </div>
-            
-            <div className="flex flex-col items-center px-2">
-              <div className="text-xs font-medium">VS</div>
+              
               {drawOdds && (
-                <Badge variant="outline" className="bg-primary/5 text-xs mt-1">
+                <Badge variant="outline" className="bg-primary/5 text-xs">
                   {drawOdds.price.toFixed(2)}
                   <span className="text-xs text-muted-foreground ml-1">
                     ({drawOdds.implied_probability.toFixed(1)}%)
                   </span>
                 </Badge>
               )}
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              {awayTeamLogo && (
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={awayTeamLogo} alt={match.away_team} />
-                  <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
-                </Avatar>
-              )}
-              <span className="font-medium text-sm md:text-base">{awayDisplayName}</span>
+              
               {awayOdds && (
                 <Badge variant="outline" className="bg-primary/10 text-xs">
                   {awayOdds.price.toFixed(2)}
