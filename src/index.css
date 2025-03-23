@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -66,33 +67,33 @@
   }
 
   .soothing {
-    --background: 210 50% 98%;
-    --foreground: 220 20% 20%;
+    --background: 120 40% 98%;
+    --foreground: 120 30% 15%;
 
-    --card: 210 50% 98%;
-    --card-foreground: 220 20% 20%;
+    --card: 120 40% 98%;
+    --card-foreground: 120 30% 15%;
 
-    --popover: 210 50% 98%;
-    --popover-foreground: 220 20% 20%;
+    --popover: 120 40% 98%;
+    --popover-foreground: 120 30% 15%;
 
-    --primary: 220 70% 50%;
-    --primary-foreground: 210 50% 98%;
+    --primary: 142 70% 45%;
+    --primary-foreground: 120 40% 98%;
 
-    --secondary: 180 60% 90%;
-    --secondary-foreground: 220 20% 20%;
+    --secondary: 120 30% 92%;
+    --secondary-foreground: 120 30% 15%;
 
-    --muted: 180 30% 90%;
-    --muted-foreground: 220 10% 40%;
+    --muted: 120 20% 92%;
+    --muted-foreground: 120 15% 40%;
 
-    --accent: 150 60% 90%;
-    --accent-foreground: 220 20% 20%;
+    --accent: 142 40% 92%;
+    --accent-foreground: 120 30% 15%;
 
     --destructive: 0 70% 60%;
-    --destructive-foreground: 210 50% 98%;
+    --destructive-foreground: 120 40% 98%;
 
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 220 70% 50%;
+    --border: 120 20% 90%;
+    --input: 120 20% 90%;
+    --ring: 142 70% 45%;
   }
 }
 

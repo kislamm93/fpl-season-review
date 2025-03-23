@@ -6,7 +6,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Moon, Sun, CloudSun } from "lucide-react";
+import { Moon, Sun, Leaf } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const THEME_KEY = "fpl-theme-preference";
@@ -47,7 +47,7 @@ export function ThemeToggle() {
         <Button variant="outline" size="icon" className="rounded-full">
           {theme === "dark" && <Moon className="h-[1.2rem] w-[1.2rem]" />}
           {theme === "light" && <Sun className="h-[1.2rem] w-[1.2rem]" />}
-          {theme === "soothing" && <CloudSun className="h-[1.2rem] w-[1.2rem]" />}
+          {theme === "soothing" && <Leaf className="h-[1.2rem] w-[1.2rem]" />}
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
@@ -61,8 +61,8 @@ export function ThemeToggle() {
           <span>Dark</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => changeTheme("soothing")}>
-          <CloudSun className="mr-2 h-4 w-4" />
-          <span>Soothing</span>
+          <Leaf className="mr-2 h-4 w-4" />
+          <span>Nature</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
