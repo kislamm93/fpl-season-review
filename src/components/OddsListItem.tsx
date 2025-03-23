@@ -55,27 +55,31 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
           </CollapsibleTrigger>
           
           <div className="px-3 py-2 flex flex-col border-y">
-            {/* Teams and logos */}
-            <div className="flex justify-center items-center space-x-3 mb-2">
-              <span className="font-medium text-sm md:text-base">{homeDisplayName}</span>
-              {homeTeamLogo && (
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={homeTeamLogo} alt={match.home_team} />
-                  <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
-                </Avatar>
-              )}
+            {/* Teams and logos with VS centered between them */}
+            <div className="flex justify-center items-center mb-2">
+              <div className="flex items-center">
+                <span className="font-medium text-sm md:text-base mr-2">{homeDisplayName}</span>
+                {homeTeamLogo && (
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={homeTeamLogo} alt={match.home_team} />
+                    <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                )}
+              </div>
               
-              <div className="flex flex-col items-center px-2">
+              <div className="mx-3 flex items-center">
                 <div className="text-xs font-medium">VS</div>
               </div>
               
-              {awayTeamLogo && (
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={awayTeamLogo} alt={match.away_team} />
-                  <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
-                </Avatar>
-              )}
-              <span className="font-medium text-sm md:text-base">{awayDisplayName}</span>
+              <div className="flex items-center">
+                {awayTeamLogo && (
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={awayTeamLogo} alt={match.away_team} />
+                    <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                )}
+                <span className="font-medium text-sm md:text-base ml-2">{awayDisplayName}</span>
+              </div>
             </div>
             
             {/* Odds below */}
