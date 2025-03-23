@@ -55,9 +55,9 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
           </CollapsibleTrigger>
           
           <div className="px-3 py-2 flex flex-col border-y">
-            {/* Teams and logos with VS centered between them */}
-            <div className="flex justify-center items-center mb-2">
-              <div className="flex items-center">
+            {/* Teams and logos with fixed width grid */}
+            <div className="grid grid-cols-3 items-center mb-2">
+              <div className="flex items-center justify-end">
                 <span className="font-medium text-sm md:text-base mr-2">{homeDisplayName}</span>
                 {homeTeamLogo && (
                   <Avatar className="h-10 w-10">
@@ -67,11 +67,11 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
                 )}
               </div>
               
-              <div className="mx-3 flex items-center">
-                <div className="text-xs font-medium">VS</div>
+              <div className="flex justify-center items-center">
+                <div className="text-xs font-medium px-3 py-1 bg-secondary/50 rounded-full w-8 text-center">VS</div>
               </div>
               
-              <div className="flex items-center">
+              <div className="flex items-center justify-start">
                 {awayTeamLogo && (
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={awayTeamLogo} alt={match.away_team} />
