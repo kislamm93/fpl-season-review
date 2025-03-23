@@ -67,33 +67,33 @@
   }
 
   .soothing {
-    --background: 120 40% 98%;
-    --foreground: 120 30% 15%;
+    --background: 120 10% 95%;
+    --foreground: 120 25% 15%;
 
-    --card: 120 40% 98%;
-    --card-foreground: 120 30% 15%;
+    --card: 120 10% 97%;
+    --card-foreground: 120 30% 10%;
 
-    --popover: 120 40% 98%;
-    --popover-foreground: 120 30% 15%;
+    --popover: 120 10% 95%;
+    --popover-foreground: 120 30% 10%;
 
-    --primary: 142 70% 45%;
-    --primary-foreground: 120 40% 98%;
+    --primary: 142 70% 35%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 120 30% 92%;
-    --secondary-foreground: 120 30% 15%;
+    --secondary: 120 5% 90%;
+    --secondary-foreground: 120 30% 10%;
 
-    --muted: 120 20% 92%;
-    --muted-foreground: 120 15% 40%;
+    --muted: 120 5% 85%;
+    --muted-foreground: 120 15% 25%;
 
-    --accent: 142 40% 92%;
-    --accent-foreground: 120 30% 15%;
+    --accent: 142 20% 85%;
+    --accent-foreground: 120 30% 10%;
 
-    --destructive: 0 70% 60%;
-    --destructive-foreground: 120 40% 98%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 120 20% 90%;
-    --input: 120 20% 90%;
-    --ring: 142 70% 45%;
+    --border: 120 10% 85%;
+    --input: 120 10% 85%;
+    --ring: 142 70% 35%;
   }
 }
 
