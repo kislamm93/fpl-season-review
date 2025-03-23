@@ -55,25 +55,25 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
           </CollapsibleTrigger>
           
           <div className="px-3 py-2 flex flex-col border-y">
-            {/* Teams and logos with more compact layout */}
-            <div className="grid grid-cols-5 items-center mb-2">
-              <div className="col-span-2 flex items-center justify-end">
+            {/* Teams layout with less space */}
+            <div className="flex items-center justify-center space-x-1">
+              <div className="flex items-center justify-end flex-1">
                 <span className="font-medium text-sm md:text-base mr-2">{homeDisplayName}</span>
                 {homeTeamLogo && (
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="h-8 w-8">
                     <AvatarImage src={homeTeamLogo} alt={match.home_team} />
                     <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
                   </Avatar>
                 )}
               </div>
               
-              <div className="flex justify-center items-center">
-                <div className="text-xs font-medium px-2 py-1 bg-secondary/50 rounded-full w-8 text-center">VS</div>
+              <div className="mx-2 flex-shrink-0">
+                <div className="text-xs font-medium bg-secondary/50 rounded-full w-8 h-8 flex items-center justify-center">VS</div>
               </div>
               
-              <div className="col-span-2 flex items-center justify-start">
+              <div className="flex items-center justify-start flex-1">
                 {awayTeamLogo && (
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="h-8 w-8">
                     <AvatarImage src={awayTeamLogo} alt={match.away_team} />
                     <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
                   </Avatar>
@@ -82,8 +82,8 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
               </div>
             </div>
             
-            {/* Only show probability percentages */}
-            <div className="flex justify-center items-center space-x-6 mt-1">
+            {/* Probability percentages */}
+            <div className="flex justify-center items-center space-x-6 mt-2">
               {homeOdds && (
                 <Badge variant="outline" className="bg-primary/10 text-xs">
                   {homeOdds.implied_probability.toFixed(1)}%
