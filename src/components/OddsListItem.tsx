@@ -42,28 +42,30 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
             </div>
           </div>
           
-          {/* Teams and logos with probability - centered in a row */}
-          <div className="flex justify-center items-center space-x-4">
+          {/* Teams and logos with probability - properly aligned in a row */}
+          <div className="flex items-center justify-center">
             {/* Home team */}
-            <div className="flex flex-col items-center text-center">
-              <div className="flex items-center justify-center mb-1">
-                {homeTeamLogo && (
-                  <Avatar className="h-6 w-6 mr-1">
-                    <AvatarImage src={homeTeamLogo} alt={match.home_team} />
-                    <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
+            <div className="flex-1 flex justify-end items-center mr-4">
+              <div className="flex flex-col items-center">
+                <div className="flex items-center mb-1">
+                  {homeTeamLogo && (
+                    <Avatar className="h-6 w-6 mr-1">
+                      <AvatarImage src={homeTeamLogo} alt={match.home_team} />
+                      <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <span className="font-medium text-sm">{homeDisplayName}</span>
+                </div>
+                {homeOdds && (
+                  <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
+                    {homeOdds.implied_probability.toFixed(1)}%
+                  </Badge>
                 )}
-                <span className="font-medium text-sm">{homeDisplayName}</span>
               </div>
-              {homeOdds && (
-                <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
-                  {homeOdds.implied_probability.toFixed(1)}%
-                </Badge>
-              )}
             </div>
             
-            {/* VS with draw probability */}
-            <div className="flex flex-col items-center justify-center">
+            {/* VS with draw probability - fixed in the middle */}
+            <div className="flex flex-col items-center justify-center flex-shrink-0 w-12">
               <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center mb-1">
                 VS
               </div>
@@ -75,21 +77,23 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
             </div>
             
             {/* Away team */}
-            <div className="flex flex-col items-center text-center">
-              <div className="flex items-center justify-center mb-1">
-                {awayTeamLogo && (
-                  <Avatar className="h-6 w-6 mr-1">
-                    <AvatarImage src={awayTeamLogo} alt={match.away_team} />
-                    <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
+            <div className="flex-1 flex justify-start items-center ml-4">
+              <div className="flex flex-col items-center">
+                <div className="flex items-center mb-1">
+                  {awayTeamLogo && (
+                    <Avatar className="h-6 w-6 mr-1">
+                      <AvatarImage src={awayTeamLogo} alt={match.away_team} />
+                      <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <span className="font-medium text-sm">{awayDisplayName}</span>
+                </div>
+                {awayOdds && (
+                  <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
+                    {awayOdds.implied_probability.toFixed(1)}%
+                  </Badge>
                 )}
-                <span className="font-medium text-sm">{awayDisplayName}</span>
               </div>
-              {awayOdds && (
-                <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
-                  {awayOdds.implied_probability.toFixed(1)}%
-                </Badge>
-              )}
             </div>
           </div>
         </div>
