@@ -24,3 +24,16 @@ export const getApiEndpoint = (endpoint: string): string => {
   
   return `${getApiBaseUrl()}${formattedEndpoint.startsWith('/') ? formattedEndpoint : `/${formattedEndpoint}`}`;
 };
+
+/**
+ * Check if we're in a test environment where we can make direct API calls
+ * This is just a simple check that can be enhanced
+ */
+export const canMakeDirectApiCalls = (): boolean => {
+  try {
+    // Check if we're in Node.js environment (for testing)
+    return typeof window === 'undefined';
+  } catch (e) {
+    return false;
+  }
+};
