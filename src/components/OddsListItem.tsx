@@ -42,33 +42,51 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
             </div>
           </div>
           
-          {/* Teams and logos with probability - properly aligned in a row */}
+          {/* Teams and logos with VS in the middle - single row format */}
           <div className="flex items-center justify-center">
-            {/* Home team */}
-            <div className="flex-1 flex justify-end items-center mr-4">
-              <div className="flex flex-col items-center">
-                <div className="flex items-center mb-1">
-                  {homeTeamLogo && (
-                    <Avatar className="h-6 w-6 mr-1">
-                      <AvatarImage src={homeTeamLogo} alt={match.home_team} />
-                      <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
-                    </Avatar>
-                  )}
-                  <span className="font-medium text-sm">{homeDisplayName}</span>
-                </div>
-                {homeOdds && (
-                  <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
-                    {homeOdds.implied_probability.toFixed(1)}%
-                  </Badge>
-                )}
+            {/* Home team name and logo side by side */}
+            <div className="flex-1 flex items-center justify-end mr-4">
+              <span className="font-medium text-sm mr-2">{homeDisplayName}</span>
+              {homeTeamLogo && (
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={homeTeamLogo} alt={match.home_team} />
+                  <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+              )}
+            </div>
+            
+            {/* VS in the middle */}
+            <div className="flex-shrink-0 mx-2">
+              <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center">
+                VS
               </div>
             </div>
             
-            {/* VS with draw probability - fixed in the middle */}
-            <div className="flex flex-col items-center justify-center flex-shrink-0 w-12">
-              <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center mb-1">
-                VS
-              </div>
+            {/* Away team logo and name side by side */}
+            <div className="flex-1 flex items-center justify-start ml-4">
+              {awayTeamLogo && (
+                <Avatar className="h-6 w-6 mr-2">
+                  <AvatarImage src={awayTeamLogo} alt={match.away_team} />
+                  <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+              )}
+              <span className="font-medium text-sm">{awayDisplayName}</span>
+            </div>
+          </div>
+          
+          {/* Probability badges */}
+          <div className="flex items-center justify-center mt-1">
+            {/* Home team probability */}
+            <div className="flex-1 flex justify-end mr-4">
+              {homeOdds && (
+                <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
+                  {homeOdds.implied_probability.toFixed(1)}%
+                </Badge>
+              )}
+            </div>
+            
+            {/* Draw probability */}
+            <div className="flex-shrink-0 mx-2">
               {drawOdds && (
                 <Badge variant="outline" className="bg-primary/5 text-xs py-0 h-5 w-16">
                   {drawOdds.implied_probability.toFixed(1)}%
@@ -76,24 +94,13 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
               )}
             </div>
             
-            {/* Away team */}
-            <div className="flex-1 flex justify-start items-center ml-4">
-              <div className="flex flex-col items-center">
-                <div className="flex items-center mb-1">
-                  {awayTeamLogo && (
-                    <Avatar className="h-6 w-6 mr-1">
-                      <AvatarImage src={awayTeamLogo} alt={match.away_team} />
-                      <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
-                    </Avatar>
-                  )}
-                  <span className="font-medium text-sm">{awayDisplayName}</span>
-                </div>
-                {awayOdds && (
-                  <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
-                    {awayOdds.implied_probability.toFixed(1)}%
-                  </Badge>
-                )}
-              </div>
+            {/* Away team probability */}
+            <div className="flex-1 flex justify-start ml-4">
+              {awayOdds && (
+                <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
+                  {awayOdds.implied_probability.toFixed(1)}%
+                </Badge>
+              )}
             </div>
           </div>
         </div>
