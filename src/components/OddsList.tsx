@@ -12,14 +12,25 @@ const fetchOdds = async (): Promise<OddsData[]> => {
   // For production, use a mock data since the fantasy.premierleague.com API doesn't have this endpoint
   const isDevelopment = import.meta.env.DEV;
   
-  if (isDevelopment) {
-    const response = await fetch(getApiEndpoint("/odds/upcoming"));
-    if (!response.ok) {
-      throw new Error("Failed to fetch odds data");
+  try {
+    if (isDevelopment) {
+      const response = await fetch(getApiEndpoint("/odds/upcoming"));
+      if (!response.ok) {
+        throw new Error("Failed to fetch odds data");
+      }
+      const data = await response.json();
+      
+      // Ensure each match has a bookmakers property, even if empty
+      return data.map((match: OddsData) => ({
+        ...match,
+        bookmakers: match.bookmakers || [],
+      }));
+    } else {
+      // Mock data for production
+      return mockUpcomingOdds;
     }
-    return response.json();
-  } else {
-    // Mock data for production
+  } catch (error) {
+    console.error("Error fetching odds data:", error);
     return mockUpcomingOdds;
   }
 };
@@ -154,10 +165,23 @@ const OddsList = () => {
     );
   }
 
+  // Check if data exists and has items
+  if (!data || data.length === 0) {
+    return (
+      <Card className="my-4">
+        <CardContent className="p-6">
+          <div className="text-center text-muted-foreground">
+            <p>No upcoming matches found.</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   // Group matches by date
   const matchesByDate: Record<string, OddsData[]> = {};
   
-  data?.forEach((match) => {
+  data.forEach((match) => {
     const matchDate = new Date(match.commence_time);
     const dateKey = format(matchDate, "yyyy-MM-dd");
     

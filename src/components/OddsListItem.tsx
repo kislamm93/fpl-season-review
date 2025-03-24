@@ -119,53 +119,61 @@ const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {match.bookmakers.map((bookmaker) => {
-                      // Find the h2h market
-                      const market = bookmaker.markets.find(m => m.key === 'h2h');
-                      if (!market) return null;
-                      
-                      // Get outcomes for home, away, and draw
-                      const homeOutcome = market.outcomes.find(o => o.name === match.home_team);
-                      const awayOutcome = market.outcomes.find(o => o.name === match.away_team);
-                      const drawOutcome = market.outcomes.find(o => o.name === 'Draw');
-                      
-                      const lastUpdated = new Date(bookmaker.last_update);
-                      const formattedLastUpdate = format(lastUpdated, "MMM d, h:mm a");
-                      
-                      return (
-                        <TableRow key={bookmaker.key}>
-                          <TableCell className="font-medium text-xs py-2">{bookmaker.title}</TableCell>
-                          <TableCell className="text-muted-foreground text-xs py-2">{formattedLastUpdate}</TableCell>
-                          <TableCell className="text-right text-xs py-2">
-                            {homeOutcome && (
-                              <div>
-                                <span className="text-xs text-muted-foreground">
-                                  {homeOutcome.implied_probability.toFixed(1)}%
-                                </span>
-                              </div>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right text-xs py-2">
-                            {drawOutcome && (
-                              <div>
-                                <span className="text-xs text-muted-foreground">
-                                  {drawOutcome.implied_probability.toFixed(1)}%
-                                </span>
-                              </div>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right text-xs py-2">
-                            {awayOutcome && (
-                              <div>
-                                <span className="text-xs text-muted-foreground">
-                                  {awayOutcome.implied_probability.toFixed(1)}%
-                                </span>
-                              </div>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                    {match.bookmakers && match.bookmakers.length > 0 ? (
+                      match.bookmakers.map((bookmaker) => {
+                        // Find the h2h market
+                        const market = bookmaker.markets.find(m => m.key === 'h2h');
+                        if (!market) return null;
+                        
+                        // Get outcomes for home, away, and draw
+                        const homeOutcome = market.outcomes.find(o => o.name === match.home_team);
+                        const awayOutcome = market.outcomes.find(o => o.name === match.away_team);
+                        const drawOutcome = market.outcomes.find(o => o.name === 'Draw');
+                        
+                        const lastUpdated = new Date(bookmaker.last_update);
+                        const formattedLastUpdate = format(lastUpdated, "MMM d, h:mm a");
+                        
+                        return (
+                          <TableRow key={bookmaker.key}>
+                            <TableCell className="font-medium text-xs py-2">{bookmaker.title}</TableCell>
+                            <TableCell className="text-muted-foreground text-xs py-2">{formattedLastUpdate}</TableCell>
+                            <TableCell className="text-right text-xs py-2">
+                              {homeOutcome && (
+                                <div>
+                                  <span className="text-xs text-muted-foreground">
+                                    {homeOutcome.implied_probability.toFixed(1)}%
+                                  </span>
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right text-xs py-2">
+                              {drawOutcome && (
+                                <div>
+                                  <span className="text-xs text-muted-foreground">
+                                    {drawOutcome.implied_probability.toFixed(1)}%
+                                  </span>
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right text-xs py-2">
+                              {awayOutcome && (
+                                <div>
+                                  <span className="text-xs text-muted-foreground">
+                                    {awayOutcome.implied_probability.toFixed(1)}%
+                                  </span>
+                                </div>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-4 text-sm text-muted-foreground">
+                          No detailed bookmaker information available
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </div>
