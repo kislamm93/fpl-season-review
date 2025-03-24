@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,7 +12,6 @@ import ManagerHistory from "./pages/ManagerHistory";
 import MiniLeaguePreview from "./pages/MiniLeaguePreview";
 import LeagueDetails from "./pages/LeagueDetails";
 import MyTeamStats from "./pages/MyTeamStats";
-import Search from "./pages/Search";
 import MarketOdd from "./pages/MarketOdd";
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -28,7 +26,6 @@ const App = () => {
     const storedId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
     setManagerId(storedId);
     
-    // Add event listener for storage changes in other tabs
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === STORAGE_KEYS.MANAGER_ID) {
         const updatedId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
@@ -38,7 +35,6 @@ const App = () => {
     
     window.addEventListener('storage', handleStorageChange);
     
-    // Create a custom event listener for same-tab changes
     const handleCustomStorageChange = () => {
       const updatedId = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
       setManagerId(updatedId);
@@ -72,9 +68,7 @@ const App = () => {
                     <Route path="/mini-league-preview" element={<MiniLeaguePreview />} />
                     <Route path="/league/:leagueId" element={<LeagueDetails />} />
                     <Route path="/my-team-stats" element={<MyTeamStats />} />
-                    <Route path="/search" element={<Search />} />
                     <Route path="/market-odds" element={<MarketOdd />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>

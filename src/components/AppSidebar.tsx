@@ -1,6 +1,6 @@
 
 import React from "react";
-import { BarChart, History, LayoutDashboard, Trophy, Search, BarChart4 } from "lucide-react";
+import { BarChart, History, LayoutDashboard, Trophy, BarChart4 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -66,14 +66,6 @@ const AppSidebar = ({ managerId }: AppSidebarProps) => {
                   <a href="/market-odds">
                     <BarChart4 />
                     <span>Market Odds</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="FPL Assistant">
-                  <a href="/search">
-                    <Search />
-                    <span>FPL Assistant</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
