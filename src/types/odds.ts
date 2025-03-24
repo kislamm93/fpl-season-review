@@ -33,6 +33,6 @@ export interface OddsData {
   commence_time: string;
   home_team: string;
   away_team: string;
-  bookmakers?: Bookmaker[]; // Make bookmakers optional
-  combined_market_odds?: CombinedMarketOdds;
+  bookmakers?: Bookmaker[]; 
+  combined_market_odds: CombinedMarketOdds;
 }

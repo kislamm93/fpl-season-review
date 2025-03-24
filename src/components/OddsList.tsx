@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getApiEndpoint } from "@/lib/env";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,13 +18,7 @@ const fetchOdds = async (): Promise<OddsData[]> => {
       if (!response.ok) {
         throw new Error("Failed to fetch odds data");
       }
-      const data = await response.json();
-      
-      // Ensure each match has a bookmakers property, even if empty
-      return data.map((match: OddsData) => ({
-        ...match,
-        bookmakers: match.bookmakers || [],
-      }));
+      return await response.json();
     } else {
       // Mock data for production
       return mockUpcomingOdds;
@@ -44,44 +38,10 @@ const mockUpcomingOdds: OddsData[] = [
     commence_time: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
     home_team: "Manchester United",
     away_team: "Liverpool",
-    bookmakers: [
-      {
-        key: "betfair",
-        title: "Betfair",
-        last_update: new Date().toISOString(),
-        markets: [
-          {
-            key: "h2h",
-            last_update: new Date().toISOString(),
-            outcomes: [
-              { name: "Manchester United", price: 3.5, implied_probability: 28.6 },
-              { name: "Liverpool", price: 2.0, implied_probability: 50.0 },
-              { name: "Draw", price: 3.7, implied_probability: 27.0 }
-            ]
-          }
-        ]
-      },
-      {
-        key: "williamhill",
-        title: "William Hill",
-        last_update: new Date().toISOString(),
-        markets: [
-          {
-            key: "h2h",
-            last_update: new Date().toISOString(),
-            outcomes: [
-              { name: "Manchester United", price: 3.3, implied_probability: 30.3 },
-              { name: "Liverpool", price: 2.1, implied_probability: 47.6 },
-              { name: "Draw", price: 3.5, implied_probability: 28.6 }
-            ]
-          }
-        ]
-      }
-    ],
     combined_market_odds: {
-      "Manchester United": { price: 3.4, implied_probability: 29.4 },
-      "Liverpool": { price: 2.05, implied_probability: 48.8 },
-      "Draw": { price: 3.6, implied_probability: 27.8 }
+      "manchester united": { name: "manchester united", price: 3.5, implied_probability: 28.6 },
+      "liverpool": { name: "liverpool", price: 2.0, implied_probability: 50.0 },
+      "draw": { name: "draw", price: 3.7, implied_probability: 27.0 }
     }
   },
   {
@@ -91,59 +51,19 @@ const mockUpcomingOdds: OddsData[] = [
     commence_time: new Date(Date.now() + 172800000).toISOString(), // Day after tomorrow
     home_team: "Arsenal",
     away_team: "Manchester City",
-    bookmakers: [
-      {
-        key: "betfair",
-        title: "Betfair",
-        last_update: new Date().toISOString(),
-        markets: [
-          {
-            key: "h2h",
-            last_update: new Date().toISOString(),
-            outcomes: [
-              { name: "Arsenal", price: 2.7, implied_probability: 37.0 },
-              { name: "Manchester City", price: 2.5, implied_probability: 40.0 },
-              { name: "Draw", price: 3.4, implied_probability: 29.4 }
-            ]
-          }
-        ]
-      },
-      {
-        key: "williamhill",
-        title: "William Hill",
-        last_update: new Date().toISOString(),
-        markets: [
-          {
-            key: "h2h",
-            last_update: new Date().toISOString(),
-            outcomes: [
-              { name: "Arsenal", price: 2.8, implied_probability: 35.7 },
-              { name: "Manchester City", price: 2.4, implied_probability: 41.7 },
-              { name: "Draw", price: 3.5, implied_probability: 28.6 }
-            ]
-          }
-        ]
-      }
-    ],
     combined_market_odds: {
-      "Arsenal": { price: 2.75, implied_probability: 36.4 },
-      "Manchester City": { price: 2.45, implied_probability: 40.8 },
-      "Draw": { price: 3.45, implied_probability: 29.0 }
+      "arsenal": { name: "arsenal", price: 2.7, implied_probability: 37.0 },
+      "manchester city": { name: "manchester city", price: 2.5, implied_probability: 40.0 },
+      "draw": { name: "draw", price: 3.4, implied_probability: 29.4 }
     }
   }
 ];
 
 const OddsList = () => {
-  const [expandedItem, setExpandedItem] = useState<string | null>(null);
-  
   const { data, isLoading, error } = useQuery({
     queryKey: ["upcoming-odds"],
     queryFn: fetchOdds,
   });
-
-  const handleItemToggle = (matchId: string) => {
-    setExpandedItem(expandedItem === matchId ? null : matchId);
-  };
 
   if (isLoading) {
     return (
@@ -209,9 +129,7 @@ const OddsList = () => {
                 {matches.map((match) => (
                   <OddsListItem 
                     key={match.id} 
-                    match={match} 
-                    isExpanded={expandedItem === match.id}
-                    onToggle={() => handleItemToggle(match.id)}
+                    match={match}
                   />
                 ))}
               </div>
