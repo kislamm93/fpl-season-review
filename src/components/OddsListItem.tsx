@@ -43,10 +43,10 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
           </div>
           
           {/* Teams and logos with probability directly below */}
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-3 gap-1">
             {/* Home team with probability */}
-            <div className="flex flex-col items-center text-center">
-              <div className="flex items-center justify-center mb-1">
+            <div className="flex flex-col items-center text-center space-y-1">
+              <div className="flex items-center justify-center">
                 {homeTeamLogo && (
                   <Avatar className="h-6 w-6 mr-1">
                     <AvatarImage src={homeTeamLogo} alt={match.home_team} />
@@ -63,8 +63,8 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
             </div>
             
             {/* VS with draw probability */}
-            <div className="flex flex-col items-center justify-center">
-              <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center mb-1">
+            <div className="flex flex-col items-center justify-center space-y-1">
+              <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center">
                 VS
               </div>
               {drawOdds && (
@@ -75,8 +75,8 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
             </div>
             
             {/* Away team with probability */}
-            <div className="flex flex-col items-center text-center">
-              <div className="flex items-center justify-center mb-1">
+            <div className="flex flex-col items-center text-center space-y-1">
+              <div className="flex items-center justify-center">
                 {awayTeamLogo && (
                   <Avatar className="h-6 w-6 mr-1">
                     <AvatarImage src={awayTeamLogo} alt={match.away_team} />
