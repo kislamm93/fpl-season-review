@@ -42,18 +42,18 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
             </div>
           </div>
           
-          {/* Teams and logos with probability - using tighter spacing */}
-          <div className="grid grid-cols-3 gap-0">
-            {/* Home team with probability */}
-            <div className="flex flex-col items-center text-center space-y-0.5 px-1">
-              <div className="flex items-center justify-center">
+          {/* Teams and logos with probability - centered in a row */}
+          <div className="flex justify-center items-center space-x-4">
+            {/* Home team */}
+            <div className="flex flex-col items-center text-center">
+              <div className="flex items-center justify-center mb-1">
                 {homeTeamLogo && (
                   <Avatar className="h-6 w-6 mr-1">
                     <AvatarImage src={homeTeamLogo} alt={match.home_team} />
                     <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
                   </Avatar>
                 )}
-                <span className="font-medium text-sm truncate max-w-[90px]">{homeDisplayName}</span>
+                <span className="font-medium text-sm">{homeDisplayName}</span>
               </div>
               {homeOdds && (
                 <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
@@ -63,8 +63,8 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
             </div>
             
             {/* VS with draw probability */}
-            <div className="flex flex-col items-center justify-center space-y-0.5">
-              <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center mb-1">
                 VS
               </div>
               {drawOdds && (
@@ -74,16 +74,16 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
               )}
             </div>
             
-            {/* Away team with probability */}
-            <div className="flex flex-col items-center text-center space-y-0.5 px-1">
-              <div className="flex items-center justify-center">
+            {/* Away team */}
+            <div className="flex flex-col items-center text-center">
+              <div className="flex items-center justify-center mb-1">
                 {awayTeamLogo && (
                   <Avatar className="h-6 w-6 mr-1">
                     <AvatarImage src={awayTeamLogo} alt={match.away_team} />
                     <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
                   </Avatar>
                 )}
-                <span className="font-medium text-sm truncate max-w-[90px]">{awayDisplayName}</span>
+                <span className="font-medium text-sm">{awayDisplayName}</span>
               </div>
               {awayOdds && (
                 <Badge variant="outline" className="bg-primary/10 text-xs py-0 h-5 w-16">
