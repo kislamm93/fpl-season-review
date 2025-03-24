@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getApiEndpoint } from "@/lib/env";
 import { Card, CardContent } from "@/components/ui/card";
@@ -60,10 +60,16 @@ const mockUpcomingOdds: OddsData[] = [
 ];
 
 const OddsList = () => {
+  const [expandedMatchId, setExpandedMatchId] = useState<string | null>(null);
+  
   const { data, isLoading, error } = useQuery({
     queryKey: ["upcoming-odds"],
     queryFn: fetchOdds,
   });
+
+  const handleToggleExpand = (matchId: string) => {
+    setExpandedMatchId(expandedMatchId === matchId ? null : matchId);
+  };
 
   if (isLoading) {
     return (
@@ -130,6 +136,8 @@ const OddsList = () => {
                   <OddsListItem 
                     key={match.id} 
                     match={match}
+                    isExpanded={expandedMatchId === match.id}
+                    onToggle={() => handleToggleExpand(match.id)}
                   />
                 ))}
               </div>

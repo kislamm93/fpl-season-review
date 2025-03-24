@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 import { OddsData } from "@/types/odds";
@@ -13,6 +13,8 @@ import { getApiEndpoint } from "@/lib/env";
 
 interface OddsListItemProps {
   match: OddsData;
+  isExpanded: boolean;
+  onToggle: () => void;
 }
 
 interface CleanSheetData {
@@ -46,9 +48,7 @@ const fetchCleanSheetData = async (matchId: string): Promise<CleanSheetResponse>
   return await response.json();
 };
 
-const OddsListItem = ({ match }: OddsListItemProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  
+const OddsListItem = ({ match, isExpanded, onToggle }: OddsListItemProps) => {
   const { data: cleanSheetData, isLoading } = useQuery({
     queryKey: ["clean-sheets", match.id],
     queryFn: () => fetchCleanSheetData(match.id),
@@ -72,10 +72,6 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
   const homeDisplayName = getTeamDisplayName(match.home_team);
   const awayDisplayName = getTeamDisplayName(match.away_team);
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-3">
@@ -92,35 +88,37 @@ const OddsListItem = ({ match }: OddsListItemProps) => {
               variant="ghost" 
               size="sm" 
               className="p-0 h-7 w-7"
-              onClick={toggleExpand}
+              onClick={onToggle}
             >
               {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </Button>
           </div>
           
-          {/* Teams and logos with VS in the middle - modified format */}
-          <div className="flex items-center justify-center space-x-3">
-            <span className="text-sm font-medium">{homeDisplayName}</span>
+          {/* Teams and logos with VS in the middle - updated format */}
+          <div className="flex items-center justify-center">
+            <div className="flex items-center">
+              <span className="text-sm font-medium mr-2">{homeDisplayName}</span>
+              {homeTeamLogo && (
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={homeTeamLogo} alt={match.home_team} />
+                  <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+              )}
+            </div>
             
-            {homeTeamLogo && (
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={homeTeamLogo} alt={match.home_team} />
-                <AvatarFallback>{homeDisplayName.slice(0, 2)}</AvatarFallback>
-              </Avatar>
-            )}
-            
-            <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center mx-3">
+            <div className="text-xs font-medium bg-secondary/50 rounded-full w-6 h-6 flex items-center justify-center mx-4">
               VS
             </div>
             
-            {awayTeamLogo && (
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={awayTeamLogo} alt={match.away_team} />
-                <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
-              </Avatar>
-            )}
-            
-            <span className="text-sm font-medium">{awayDisplayName}</span>
+            <div className="flex items-center">
+              {awayTeamLogo && (
+                <Avatar className="h-6 w-6 mr-2">
+                  <AvatarImage src={awayTeamLogo} alt={match.away_team} />
+                  <AvatarFallback>{awayDisplayName.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+              )}
+              <span className="text-sm font-medium">{awayDisplayName}</span>
+            </div>
           </div>
           
           {/* Probability badges */}
