@@ -1,11 +1,12 @@
+
 export interface FplPlayer {
   id: number;
   first_name: string;
   second_name: string;
   web_name: string;
   team: number;
-  team_code: number;
-  position: number;
+  team_code?: number;
+  position?: number;
   element_type: number;
   now_cost: number; // Cost in tenths of a million
   total_points: number;
@@ -15,11 +16,16 @@ export interface FplPlayer {
   clean_sheets: number;
   yellow_cards: number;
   red_cards: number;
-  form: string;
+  form?: string;
   points_per_game: string;
   selected_by_percent: string;
-  status: string;
-  photo: string;
+  status?: string;
+  photo?: string;
+  
+  // Additional properties used in mock data
+  bonus?: number;
+  chance_of_playing_next_round?: number | null;
+  chance_of_playing_this_round?: number | null;
 }
 
 export interface FplTeam {
@@ -27,6 +33,8 @@ export interface FplTeam {
   name: string;
   short_name: string;
   code: number;
+  form?: string | null;
+  pulse_id?: number;
 }
 
 export interface FplPosition {
@@ -35,12 +43,27 @@ export interface FplPosition {
   singular_name_short: string;
   plural_name: string;
   plural_name_short: string;
+  
+  // Additional properties used in mock data
+  squad_select?: number;
+  squad_min_play?: number;
+  squad_max_play?: number;
+  element_count?: number;
+  ui_shirt_specific?: boolean;
 }
 
 export interface FplBootstrapResponse {
   elements: FplPlayer[];
   teams: FplTeam[];
   element_types: FplPosition[];
+  
+  // Additional properties to complete the mock data structure
+  events?: any[];
+  game_settings?: any;
+  phases?: any[];
+  element_stats?: any[];
+  total_players?: number;
+  total_teams?: number;
 }
 
 export interface FplGameweekHistory {
