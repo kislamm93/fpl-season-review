@@ -29,6 +29,7 @@ type SortField =
   | 'expected_goal_involvements' 
   | 'expected_goals_conceded' 
   | 'clean_sheets'
+  | 'defensive_contribution'
   | 'yellow_cards'
   | 'red_cards'
   | 'points_per_game';
@@ -56,32 +57,10 @@ const MyTeamStats = () => {
     }
   }, [teamStats]);
 
-  // Function to get team name from team code (placeholder)
-  const getTeamName = (teamCode: number) => {
-    const teamNames: Record<number, string> = {
-      1: "Arsenal",
-      2: "Aston Villa",
-      3: "Bournemouth",
-      4: "Brentford",
-      5: "Brighton",
-      6: "Burnley",
-      7: "Chelsea",
-      8: "Crystal Palace",
-      9: "Everton",
-      10: "Fulham",
-      11: "Liverpool",
-      12: "Luton",
-      13: "Man City",
-      14: "Man Utd",
-      15: "Newcastle",
-      16: "Nott'm Forest",
-      17: "Sheffield Utd",
-      18: "Spurs",
-      19: "West Ham",
-      20: "Wolves",
-    };
-    
-    return teamNames[teamCode] || `Team ${teamCode}`;
+  // Team name now comes from the backend (bootstrap-static), so it always
+  // reflects the current season rather than a hardcoded list.
+  const getTeamName = (player: TeamStats) => {
+    return player.team_short_name || (player.team ? `Team ${player.team}` : "–");
   };
 
   // Function to handle sorting
@@ -193,14 +172,21 @@ const MyTeamStats = () => {
                     >
                       Assists {renderSortIndicator('assists')}
                     </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
+                    <TableHead
+                      className="text-right cursor-pointer"
                       onClick={() => handleSort('clean_sheets')}
                     >
                       Clean Sheets {renderSortIndicator('clean_sheets')}
                     </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
+                    <TableHead
+                      className="text-right cursor-pointer whitespace-nowrap"
+                      onClick={() => handleSort('defensive_contribution')}
+                      title="Defensive Contribution points"
+                    >
+                      DefCon {renderSortIndicator('defensive_contribution')}
+                    </TableHead>
+                    <TableHead
+                      className="text-right cursor-pointer"
                       onClick={() => handleSort('minutes')}
                     >
                       Minutes {renderSortIndicator('minutes')}
@@ -253,13 +239,14 @@ const MyTeamStats = () => {
                   {sortedData.map((player, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{player.web_name || player.player_name}</TableCell>
-                      <TableCell>{getTeamName(player.team)}</TableCell>
+                      <TableCell>{getTeamName(player)}</TableCell>
                       <TableCell className="text-right">{player.total_points}</TableCell>
                       <TableCell className="text-right">{player.points_per_game}</TableCell>
                       <TableCell className="text-right">{player.selected_by_percent}%</TableCell>
                       <TableCell className="text-right">{player.goals_scored}</TableCell>
                       <TableCell className="text-right">{player.assists}</TableCell>
                       <TableCell className="text-right">{player.clean_sheets}</TableCell>
+                      <TableCell className="text-right">{player.defensive_contribution}</TableCell>
                       <TableCell className="text-right">{player.minutes}</TableCell>
                       <TableCell className="text-right">{player.yellow_cards}</TableCell>
                       <TableCell className="text-right">{player.red_cards}</TableCell>

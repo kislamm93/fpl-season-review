@@ -39,4 +39,5 @@ export const removeFromLocalStorage = (key: string): void => {
 // Storage keys
 export const STORAGE_KEYS = {
   MANAGER_ID: 'fpl_manager_id',
+  ADMIN_KEY: 'fpl_admin_key',
 };

@@ -13,6 +13,8 @@ import MiniLeaguePreview from "./pages/MiniLeaguePreview";
 import LeagueDetails from "./pages/LeagueDetails";
 import MyTeamStats from "./pages/MyTeamStats";
 import MarketOdd from "./pages/MarketOdd";
+import FixtureTicker from "./pages/FixtureTicker";
+import CompareTeams from "./pages/CompareTeams";
 import { STORAGE_KEYS, getFromLocalStorage } from "@/lib/localStorage";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
@@ -61,7 +63,7 @@ const App = () => {
                 <div className="absolute top-4 right-4 z-10">
                   <ThemeToggle />
                 </div>
-                <BrowserRouter>
+                <BrowserRouter basename={import.meta.env.BASE_URL}>
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/manager-history" element={<ManagerHistory />} />
@@ -69,6 +71,8 @@ const App = () => {
                     <Route path="/league/:leagueId" element={<LeagueDetails />} />
                     <Route path="/my-team-stats" element={<MyTeamStats />} />
                     <Route path="/market-odds" element={<MarketOdd />} />
+                    <Route path="/fixture-ticker" element={<FixtureTicker />} />
+                    <Route path="/compare-teams" element={<CompareTeams />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>

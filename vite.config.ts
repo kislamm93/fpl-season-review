@@ -5,6 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // On GitHub Pages a project repo is served from /<repo>/, so assets need that
+  // prefix. CI sets VITE_BASE=/<repo>/; locally it defaults to '/'.
+  base: process.env.VITE_BASE || "/",
   server: {
     host: "::",
     port: 8080,

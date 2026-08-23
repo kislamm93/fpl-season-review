@@ -3,9 +3,12 @@
  * Environment configuration utility
  */
 
+// Both dev and prod talk to OUR fpl-backend (not the raw FPL API):
+//   dev  -> local uvicorn on :8000
+//   prod -> Render URL injected at build time via VITE_API_BASE
 export const API_URLS = {
   development: "http://127.0.0.1:8000",
-  production: "https://fantasy.premierleague.com/api",
+  production: import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:8000",
 };
 
 export const getApiBaseUrl = (): string => {
@@ -14,14 +17,12 @@ export const getApiBaseUrl = (): string => {
 };
 
 export const getApiEndpoint = (endpoint: string): string => {
-  // Remove the /api prefix if it's included in the endpoint for development environment
-  const isDevelopment = import.meta.env.DEV;
-  let formattedEndpoint = endpoint;
-  
-  if (isDevelopment && endpoint.startsWith('/api/')) {
-    formattedEndpoint = endpoint.replace('/api', '');
-  }
-  
+  // Our backend mounts routes without the /api prefix (unlike the raw FPL API),
+  // so strip it in every environment now that prod targets our backend too.
+  let formattedEndpoint = endpoint.startsWith('/api/')
+    ? endpoint.replace('/api', '')
+    : endpoint;
+
   return `${getApiBaseUrl()}${formattedEndpoint.startsWith('/') ? formattedEndpoint : `/${formattedEndpoint}`}`;
 };
 

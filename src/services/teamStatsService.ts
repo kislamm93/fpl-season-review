@@ -8,6 +8,7 @@ export interface TeamStats {
   goals_scored: number;
   assists: number;
   clean_sheets: number;
+  defensive_contribution: number;
   minutes: number;
   yellow_cards: number;
   red_cards: number;
@@ -18,6 +19,7 @@ export interface TeamStats {
   expected_goals_conceded: string;
   web_name: string;
   team: number;
+  team_short_name: string;
   team_code: number;
   points_per_game: string;
   selected_by_percent: string;
@@ -33,6 +35,7 @@ export interface TeamStatsResponse {
       goals_scored: number;
       assists: number;
       clean_sheets: number;
+      defensive_contribution: number;
       yellow_cards: number;
       red_cards: number;
       bonus: number;
@@ -44,6 +47,7 @@ export interface TeamStatsResponse {
     };
     web_name: string;
     team: number;
+    team_short_name: string;
     team_code: number;
     points_per_game: string;
     selected_by_percent: string;
@@ -57,6 +61,7 @@ export const transformTeamStatsResponse = (response: TeamStatsResponse): TeamSta
     goals_scored: player.stats.goals_scored,
     assists: player.stats.assists,
     clean_sheets: player.stats.clean_sheets,
+    defensive_contribution: player.stats.defensive_contribution,
     minutes: player.stats.minutes,
     yellow_cards: player.stats.yellow_cards,
     red_cards: player.stats.red_cards,
@@ -67,6 +72,7 @@ export const transformTeamStatsResponse = (response: TeamStatsResponse): TeamSta
     expected_goals_conceded: player.stats.expected_goals_conceded,
     web_name: player.web_name,
     team: player.team,
+    team_short_name: player.team_short_name,
     team_code: player.team_code,
     points_per_game: player.points_per_game,
     selected_by_percent: player.selected_by_percent
