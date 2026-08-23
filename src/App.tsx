@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { HelmetProvider } from "react-helmet-async";
 import AppSidebar from "@/components/AppSidebar";
 import Index from "./pages/Index";
@@ -61,7 +61,14 @@ const App = () => {
               <div className="flex w-full min-h-screen">
                 <AppSidebar managerId={managerId} />
                 <main className="flex-1 relative">
-                  <div className="absolute top-4 right-4 z-10">
+                  {/* Mobile top bar: hamburger toggles the off-canvas sidebar */}
+                  {managerId && (
+                    <div className="sticky top-0 z-20 flex items-center gap-2 border-b bg-background/80 p-2 backdrop-blur md:hidden">
+                      <SidebarTrigger aria-label="Toggle menu" />
+                      <span className="text-sm font-medium">Menu</span>
+                    </div>
+                  )}
+                  <div className="absolute top-3 right-4 z-30">
                     <ThemeToggle />
                   </div>
                   <Routes>
