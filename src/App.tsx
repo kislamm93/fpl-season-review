@@ -70,6 +70,7 @@ const App = () => {
                     <Route path="/mini-league-preview" element={<MiniLeaguePreview />} />
                     <Route path="/league/:leagueId" element={<LeagueDetails />} />
                     <Route path="/my-team-stats" element={<MyTeamStats />} />
+                    <Route path="/my-team-stats/:managerId" element={<MyTeamStats />} />
                     <Route path="/market-odds" element={<MarketOdd />} />
                     <Route path="/fixture-ticker" element={<FixtureTicker />} />
                     <Route path="/compare-teams" element={<CompareTeams />} />

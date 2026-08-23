@@ -1,6 +1,9 @@
 
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTeamStats } from "@/hooks/useTeamStats";
+import { STORAGE_KEYS, getFromLocalStorage, saveToLocalStorage } from "@/lib/localStorage";
 import { 
   Table, 
   TableBody, 
@@ -37,6 +40,22 @@ type SortField =
 type SortDirection = 'asc' | 'desc';
 
 const MyTeamStats = () => {
+  const { managerId: managerIdParam } = useParams<{ managerId: string }>();
+  const queryClient = useQueryClient();
+
+  // If a manager ID is supplied in the URL (/my-team-stats/:managerId), adopt it
+  // as the app's manager ID so every page uses it. It can still be changed later
+  // via the manager ID form.
+  React.useEffect(() => {
+    const id = managerIdParam?.trim();
+    if (!id) return;
+    const current = getFromLocalStorage<string | null>(STORAGE_KEYS.MANAGER_ID, null);
+    if (id === current) return;
+    saveToLocalStorage(STORAGE_KEYS.MANAGER_ID, id);
+    window.dispatchEvent(new Event('local-storage-change')); // update sidebar/dashboard
+    queryClient.invalidateQueries({ queryKey: ['team-stats'] }); // refetch for new id
+  }, [managerIdParam, queryClient]);
+
   const { data: teamStats, isLoading, error } = useTeamStats();
   const [sortField, setSortField] = useState<SortField>('total_points');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
