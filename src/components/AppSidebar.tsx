@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 import { BarChart, History, LayoutDashboard, Trophy, BarChart4, CalendarClock, Users } from "lucide-react";
 import {
   Sidebar,
@@ -31,58 +32,58 @@ const AppSidebar = ({ managerId }: AppSidebarProps) => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Dashboard">
-                  <a href="/">
+                  <Link to="/">
                     <LayoutDashboard />
                     <span>Dashboard</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="My Team Stats">
-                  <a href="/my-team-stats">
+                  <Link to="/my-team-stats">
                     <BarChart />
                     <span>My Team Stats</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Manager History">
-                  <a href="/manager-history">
+                  <Link to="/manager-history">
                     <History />
                     <span>Manager History</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Mini League Preview">
-                  <a href="/mini-league-preview">
+                  <Link to="/mini-league-preview">
                     <Trophy />
                     <span>Mini League Preview</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Market Odds">
-                  <a href="/market-odds">
+                  <Link to="/market-odds">
                     <BarChart4 />
                     <span>Market Odds</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Fixture Ticker">
-                  <a href="/fixture-ticker">
+                  <Link to="/fixture-ticker">
                     <CalendarClock />
                     <span>Fixture Ticker</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Compare Teams">
-                  <a href="/compare-teams">
+                  <Link to="/compare-teams">
                     <Users />
                     <span>Compare Teams</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

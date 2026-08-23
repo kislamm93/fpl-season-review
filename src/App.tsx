@@ -57,13 +57,13 @@ const App = () => {
           <Toaster />
           <Sonner />
           <SidebarProvider>
-            <div className="flex w-full min-h-screen">
-              <AppSidebar managerId={managerId} />
-              <main className="flex-1 relative">
-                <div className="absolute top-4 right-4 z-10">
-                  <ThemeToggle />
-                </div>
-                <BrowserRouter basename={import.meta.env.BASE_URL}>
+            <BrowserRouter basename={import.meta.env.BASE_URL}>
+              <div className="flex w-full min-h-screen">
+                <AppSidebar managerId={managerId} />
+                <main className="flex-1 relative">
+                  <div className="absolute top-4 right-4 z-10">
+                    <ThemeToggle />
+                  </div>
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/manager-history" element={<ManagerHistory />} />
@@ -75,9 +75,9 @@ const App = () => {
                     <Route path="/compare-teams" element={<CompareTeams />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </BrowserRouter>
-              </main>
-            </div>
+                </main>
+              </div>
+            </BrowserRouter>
           </SidebarProvider>
         </HelmetProvider>
       </TooltipProvider>
