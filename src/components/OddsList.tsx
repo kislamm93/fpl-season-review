@@ -8,56 +8,13 @@ import OddsListItem from "./OddsListItem";
 import { OddsData } from "@/types/odds";
 
 const fetchOdds = async (): Promise<OddsData[]> => {
-  // For development, use the local endpoint
-  // For production, use a mock data since the fantasy.premierleague.com API doesn't have this endpoint
-  const isDevelopment = import.meta.env.DEV;
-  
-  try {
-    if (isDevelopment) {
-      const response = await fetch(getApiEndpoint("/odds/upcoming"));
-      if (!response.ok) {
-        throw new Error("Failed to fetch odds data");
-      }
-      return await response.json();
-    } else {
-      // Mock data for production
-      return mockUpcomingOdds;
-    }
-  } catch (error) {
-    console.error("Error fetching odds data:", error);
-    return mockUpcomingOdds;
+  // Both dev and prod hit our backend (localhost / Render) via getApiEndpoint.
+  const response = await fetch(getApiEndpoint("/odds/upcoming"));
+  if (!response.ok) {
+    throw new Error("Failed to fetch odds data");
   }
+  return await response.json();
 };
-
-// Mock data for when in production
-const mockUpcomingOdds: OddsData[] = [
-  {
-    id: "1",
-    sport_key: "soccer_epl",
-    sport_title: "EPL",
-    commence_time: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
-    home_team: "Manchester United",
-    away_team: "Liverpool",
-    combined_market_odds: {
-      "manchester united": { name: "manchester united", price: 3.5, implied_probability: 28.6 },
-      "liverpool": { name: "liverpool", price: 2.0, implied_probability: 50.0 },
-      "draw": { name: "draw", price: 3.7, implied_probability: 27.0 }
-    }
-  },
-  {
-    id: "2",
-    sport_key: "soccer_epl",
-    sport_title: "EPL",
-    commence_time: new Date(Date.now() + 172800000).toISOString(), // Day after tomorrow
-    home_team: "Arsenal",
-    away_team: "Manchester City",
-    combined_market_odds: {
-      "arsenal": { name: "arsenal", price: 2.7, implied_probability: 37.0 },
-      "manchester city": { name: "manchester city", price: 2.5, implied_probability: 40.0 },
-      "draw": { name: "draw", price: 3.4, implied_probability: 29.4 }
-    }
-  }
-];
 
 const OddsList = () => {
   const [expandedMatchId, setExpandedMatchId] = useState<string | null>(null);
