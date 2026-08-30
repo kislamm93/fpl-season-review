@@ -150,8 +150,7 @@ const MyTeamStats = () => {
               ))}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="sticky left-0 z-20 bg-background border-r">Player</TableHead>
@@ -278,7 +277,6 @@ const MyTeamStats = () => {
                   ))}
                 </TableBody>
               </Table>
-            </div>
           )}
         </CardContent>
       </Card>
