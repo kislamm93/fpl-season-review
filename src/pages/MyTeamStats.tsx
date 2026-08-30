@@ -154,7 +154,7 @@ const MyTeamStats = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Player</TableHead>
+                    <TableHead className="sticky left-0 z-20 bg-background border-r">Player</TableHead>
                     <TableHead 
                       className="cursor-pointer" 
                       onClick={() => handleSort('team')}
@@ -257,7 +257,7 @@ const MyTeamStats = () => {
                 <TableBody>
                   {sortedData.map((player, index) => (
                     <TableRow key={index}>
-                      <TableCell className="font-medium">{player.web_name || player.player_name}</TableCell>
+                      <TableCell className="sticky left-0 z-10 bg-background border-r font-medium">{player.web_name || player.player_name}</TableCell>
                       <TableCell>{getTeamName(player)}</TableCell>
                       <TableCell className="text-right">{player.total_points}</TableCell>
                       <TableCell className="text-right">{player.points_per_game}</TableCell>
