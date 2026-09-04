@@ -60,7 +60,7 @@ const App = () => {
             <BrowserRouter basename={import.meta.env.BASE_URL}>
               <div className="flex w-full min-h-screen">
                 <AppSidebar managerId={managerId} />
-                <main className="flex-1 relative">
+                <main className="flex-1 relative min-w-0">
                   {/* Mobile top bar: hamburger toggles the off-canvas sidebar */}
                   {managerId && (
                     <div className="sticky top-0 z-20 flex items-center gap-2 border-b bg-background/80 p-2 backdrop-blur md:hidden">

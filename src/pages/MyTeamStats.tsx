@@ -4,14 +4,6 @@ import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTeamStats } from "@/hooks/useTeamStats";
 import { STORAGE_KEYS, getFromLocalStorage, saveToLocalStorage } from "@/lib/localStorage";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -134,6 +126,33 @@ const MyTeamStats = () => {
   // Get sorted data
   const sortedData = teamStats ? sortData(teamStats) : [];
 
+  // Every column except the frozen player name. Keeping these in one list lets
+  // the header and body stay in lockstep and avoids 16 copy-pasted <th>/<td>.
+  const STAT_COLUMNS: Array<{
+    field: SortField;
+    label: string;
+    align?: 'left' | 'right';
+    title?: string;
+    render: (p: TeamStats) => React.ReactNode;
+  }> = [
+    { field: 'team', label: 'Team', align: 'left', render: (p) => getTeamName(p) },
+    { field: 'total_points', label: 'Points', render: (p) => p.total_points },
+    { field: 'points_per_game', label: 'PPG', render: (p) => p.points_per_game },
+    { field: 'selected_by_percent', label: 'Selected', render: (p) => `${p.selected_by_percent}%` },
+    { field: 'goals_scored', label: 'Goals', render: (p) => p.goals_scored },
+    { field: 'assists', label: 'Assists', render: (p) => p.assists },
+    { field: 'clean_sheets', label: 'Clean Sheets', render: (p) => p.clean_sheets },
+    { field: 'defensive_contribution', label: 'DefCon', title: 'Defensive Contribution points', render: (p) => p.defensive_contribution },
+    { field: 'minutes', label: 'Minutes', render: (p) => p.minutes },
+    { field: 'yellow_cards', label: 'Yellow Cards', render: (p) => p.yellow_cards },
+    { field: 'red_cards', label: 'Red Cards', render: (p) => p.red_cards },
+    { field: 'bonus', label: 'Bonus', render: (p) => p.bonus },
+    { field: 'expected_goals', label: 'xG', render: (p) => p.expected_goals },
+    { field: 'expected_assists', label: 'xA', render: (p) => p.expected_assists },
+    { field: 'expected_goal_involvements', label: 'xGI', render: (p) => p.expected_goal_involvements },
+    { field: 'expected_goals_conceded', label: 'xGC', render: (p) => p.expected_goals_conceded },
+  ];
+
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-6">My Team Stats</h1>
@@ -150,160 +169,48 @@ const MyTeamStats = () => {
               ))}
             </div>
           ) : (
-            // Frozen first column: the player names live in their own table that
-            // never scrolls, sitting beside a second table holding the scrollable
-            // stats. No position:sticky (iOS Safari drifts it), so the names stay
-            // put. Row heights match because both tables use the same components
-            // with single-line (whitespace-nowrap) cells and h-12 headers.
-            <div className="flex">
-              <div className="shrink-0 border-r">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="whitespace-nowrap">Player</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedData.map((player, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="whitespace-nowrap font-medium">
-                          {player.web_name || player.player_name}
-                        </TableCell>
-                      </TableRow>
+            // Frozen first column via a single native table. One overflow-x-auto
+            // scroll container (so the page never scrolls sideways — that was what
+            // dragged the names along), first column position:sticky left-0, and
+            // border-separate: with border-collapse:collapse iOS Safari silently
+            // disables sticky cells, which is why earlier attempts drifted.
+            <div className="w-full overflow-x-auto">
+              <table className="w-full caption-bottom border-separate border-spacing-0 text-sm">
+                <thead>
+                  <tr>
+                    <th className="sticky left-0 z-20 h-12 whitespace-nowrap border-b border-r bg-background px-4 text-left align-middle font-medium text-muted-foreground">
+                      Player
+                    </th>
+                    {STAT_COLUMNS.map((col) => (
+                      <th
+                        key={col.field}
+                        title={col.title}
+                        onClick={() => handleSort(col.field)}
+                        className={`h-12 cursor-pointer whitespace-nowrap border-b px-4 align-middle font-medium text-muted-foreground ${col.align === 'left' ? 'text-left' : 'text-right'}`}
+                      >
+                        {col.label} {renderSortIndicator(col.field)}
+                      </th>
                     ))}
-                  </TableBody>
-                </Table>
-              </div>
-
-              {/* min-w-0 lets this flex child shrink so its OWN table scrolls,
-                  instead of widening the page (which is what made it drift). */}
-              <div className="min-w-0 flex-1">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead
-                        className="cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('team')}
-                      >
-                        Team {renderSortIndicator('team')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('total_points')}
-                      >
-                        Points {renderSortIndicator('total_points')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('points_per_game')}
-                      >
-                        PPG {renderSortIndicator('points_per_game')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('selected_by_percent')}
-                      >
-                        Selected {renderSortIndicator('selected_by_percent')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('goals_scored')}
-                      >
-                        Goals {renderSortIndicator('goals_scored')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('assists')}
-                      >
-                        Assists {renderSortIndicator('assists')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('clean_sheets')}
-                      >
-                        Clean Sheets {renderSortIndicator('clean_sheets')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('defensive_contribution')}
-                        title="Defensive Contribution points"
-                      >
-                        DefCon {renderSortIndicator('defensive_contribution')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('minutes')}
-                      >
-                        Minutes {renderSortIndicator('minutes')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('yellow_cards')}
-                      >
-                        Yellow Cards {renderSortIndicator('yellow_cards')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('red_cards')}
-                      >
-                        Red Cards {renderSortIndicator('red_cards')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('bonus')}
-                      >
-                        Bonus {renderSortIndicator('bonus')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('expected_goals')}
-                      >
-                        xG {renderSortIndicator('expected_goals')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('expected_assists')}
-                      >
-                        xA {renderSortIndicator('expected_assists')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('expected_goal_involvements')}
-                      >
-                        xGI {renderSortIndicator('expected_goal_involvements')}
-                      </TableHead>
-                      <TableHead
-                        className="text-right cursor-pointer whitespace-nowrap"
-                        onClick={() => handleSort('expected_goals_conceded')}
-                      >
-                        xGC {renderSortIndicator('expected_goals_conceded')}
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedData.map((player, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="whitespace-nowrap">{getTeamName(player)}</TableCell>
-                        <TableCell className="text-right">{player.total_points}</TableCell>
-                        <TableCell className="text-right">{player.points_per_game}</TableCell>
-                        <TableCell className="text-right">{player.selected_by_percent}%</TableCell>
-                        <TableCell className="text-right">{player.goals_scored}</TableCell>
-                        <TableCell className="text-right">{player.assists}</TableCell>
-                        <TableCell className="text-right">{player.clean_sheets}</TableCell>
-                        <TableCell className="text-right">{player.defensive_contribution}</TableCell>
-                        <TableCell className="text-right">{player.minutes}</TableCell>
-                        <TableCell className="text-right">{player.yellow_cards}</TableCell>
-                        <TableCell className="text-right">{player.red_cards}</TableCell>
-                        <TableCell className="text-right">{player.bonus}</TableCell>
-                        <TableCell className="text-right">{player.expected_goals}</TableCell>
-                        <TableCell className="text-right">{player.expected_assists}</TableCell>
-                        <TableCell className="text-right">{player.expected_goal_involvements}</TableCell>
-                        <TableCell className="text-right">{player.expected_goals_conceded}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedData.map((player, index) => (
+                    <tr key={index} className="group transition-colors hover:bg-muted/50">
+                      <td className="sticky left-0 z-10 whitespace-nowrap border-b border-r bg-background px-4 py-4 align-middle font-medium group-hover:bg-muted/50">
+                        {player.web_name || player.player_name}
+                      </td>
+                      {STAT_COLUMNS.map((col) => (
+                        <td
+                          key={col.field}
+                          className={`border-b px-4 py-4 align-middle ${col.align === 'left' ? 'whitespace-nowrap text-left' : 'text-right'}`}
+                        >
+                          {col.render(player)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </CardContent>
