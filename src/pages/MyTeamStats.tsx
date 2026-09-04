@@ -150,133 +150,161 @@ const MyTeamStats = () => {
               ))}
             </div>
           ) : (
-            <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="sticky left-0 z-20 bg-background border-r">Player</TableHead>
-                    <TableHead 
-                      className="cursor-pointer" 
-                      onClick={() => handleSort('team')}
-                    >
-                      Team {renderSortIndicator('team')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('total_points')}
-                    >
-                      Points {renderSortIndicator('total_points')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('points_per_game')}
-                    >
-                      PPG {renderSortIndicator('points_per_game')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('selected_by_percent')}
-                    >
-                      Selected {renderSortIndicator('selected_by_percent')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('goals_scored')}
-                    >
-                      Goals {renderSortIndicator('goals_scored')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('assists')}
-                    >
-                      Assists {renderSortIndicator('assists')}
-                    </TableHead>
-                    <TableHead
-                      className="text-right cursor-pointer"
-                      onClick={() => handleSort('clean_sheets')}
-                    >
-                      Clean Sheets {renderSortIndicator('clean_sheets')}
-                    </TableHead>
-                    <TableHead
-                      className="text-right cursor-pointer whitespace-nowrap"
-                      onClick={() => handleSort('defensive_contribution')}
-                      title="Defensive Contribution points"
-                    >
-                      DefCon {renderSortIndicator('defensive_contribution')}
-                    </TableHead>
-                    <TableHead
-                      className="text-right cursor-pointer"
-                      onClick={() => handleSort('minutes')}
-                    >
-                      Minutes {renderSortIndicator('minutes')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('yellow_cards')}
-                    >
-                      Yellow Cards {renderSortIndicator('yellow_cards')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('red_cards')}
-                    >
-                      Red Cards {renderSortIndicator('red_cards')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('bonus')}
-                    >
-                      Bonus {renderSortIndicator('bonus')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('expected_goals')}
-                    >
-                      xG {renderSortIndicator('expected_goals')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('expected_assists')}
-                    >
-                      xA {renderSortIndicator('expected_assists')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('expected_goal_involvements')}
-                    >
-                      xGI {renderSortIndicator('expected_goal_involvements')}
-                    </TableHead>
-                    <TableHead 
-                      className="text-right cursor-pointer" 
-                      onClick={() => handleSort('expected_goals_conceded')}
-                    >
-                      xGC {renderSortIndicator('expected_goals_conceded')}
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedData.map((player, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="sticky left-0 z-10 bg-background border-r font-medium">{player.web_name || player.player_name}</TableCell>
-                      <TableCell>{getTeamName(player)}</TableCell>
-                      <TableCell className="text-right">{player.total_points}</TableCell>
-                      <TableCell className="text-right">{player.points_per_game}</TableCell>
-                      <TableCell className="text-right">{player.selected_by_percent}%</TableCell>
-                      <TableCell className="text-right">{player.goals_scored}</TableCell>
-                      <TableCell className="text-right">{player.assists}</TableCell>
-                      <TableCell className="text-right">{player.clean_sheets}</TableCell>
-                      <TableCell className="text-right">{player.defensive_contribution}</TableCell>
-                      <TableCell className="text-right">{player.minutes}</TableCell>
-                      <TableCell className="text-right">{player.yellow_cards}</TableCell>
-                      <TableCell className="text-right">{player.red_cards}</TableCell>
-                      <TableCell className="text-right">{player.bonus}</TableCell>
-                      <TableCell className="text-right">{player.expected_goals}</TableCell>
-                      <TableCell className="text-right">{player.expected_assists}</TableCell>
-                      <TableCell className="text-right">{player.expected_goal_involvements}</TableCell>
-                      <TableCell className="text-right">{player.expected_goals_conceded}</TableCell>
+            // Frozen first column: the player names live in their own table that
+            // never scrolls, sitting beside a second table holding the scrollable
+            // stats. No position:sticky (iOS Safari drifts it), so the names stay
+            // put. Row heights match because both tables use the same components
+            // with single-line (whitespace-nowrap) cells and h-12 headers.
+            <div className="flex">
+              <div className="shrink-0 border-r">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="whitespace-nowrap">Player</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedData.map((player, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="whitespace-nowrap font-medium">
+                          {player.web_name || player.player_name}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* min-w-0 lets this flex child shrink so its OWN table scrolls,
+                  instead of widening the page (which is what made it drift). */}
+              <div className="min-w-0 flex-1">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead
+                        className="cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('team')}
+                      >
+                        Team {renderSortIndicator('team')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('total_points')}
+                      >
+                        Points {renderSortIndicator('total_points')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('points_per_game')}
+                      >
+                        PPG {renderSortIndicator('points_per_game')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('selected_by_percent')}
+                      >
+                        Selected {renderSortIndicator('selected_by_percent')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('goals_scored')}
+                      >
+                        Goals {renderSortIndicator('goals_scored')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('assists')}
+                      >
+                        Assists {renderSortIndicator('assists')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('clean_sheets')}
+                      >
+                        Clean Sheets {renderSortIndicator('clean_sheets')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('defensive_contribution')}
+                        title="Defensive Contribution points"
+                      >
+                        DefCon {renderSortIndicator('defensive_contribution')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('minutes')}
+                      >
+                        Minutes {renderSortIndicator('minutes')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('yellow_cards')}
+                      >
+                        Yellow Cards {renderSortIndicator('yellow_cards')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('red_cards')}
+                      >
+                        Red Cards {renderSortIndicator('red_cards')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('bonus')}
+                      >
+                        Bonus {renderSortIndicator('bonus')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('expected_goals')}
+                      >
+                        xG {renderSortIndicator('expected_goals')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('expected_assists')}
+                      >
+                        xA {renderSortIndicator('expected_assists')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('expected_goal_involvements')}
+                      >
+                        xGI {renderSortIndicator('expected_goal_involvements')}
+                      </TableHead>
+                      <TableHead
+                        className="text-right cursor-pointer whitespace-nowrap"
+                        onClick={() => handleSort('expected_goals_conceded')}
+                      >
+                        xGC {renderSortIndicator('expected_goals_conceded')}
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedData.map((player, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="whitespace-nowrap">{getTeamName(player)}</TableCell>
+                        <TableCell className="text-right">{player.total_points}</TableCell>
+                        <TableCell className="text-right">{player.points_per_game}</TableCell>
+                        <TableCell className="text-right">{player.selected_by_percent}%</TableCell>
+                        <TableCell className="text-right">{player.goals_scored}</TableCell>
+                        <TableCell className="text-right">{player.assists}</TableCell>
+                        <TableCell className="text-right">{player.clean_sheets}</TableCell>
+                        <TableCell className="text-right">{player.defensive_contribution}</TableCell>
+                        <TableCell className="text-right">{player.minutes}</TableCell>
+                        <TableCell className="text-right">{player.yellow_cards}</TableCell>
+                        <TableCell className="text-right">{player.red_cards}</TableCell>
+                        <TableCell className="text-right">{player.bonus}</TableCell>
+                        <TableCell className="text-right">{player.expected_goals}</TableCell>
+                        <TableCell className="text-right">{player.expected_assists}</TableCell>
+                        <TableCell className="text-right">{player.expected_goal_involvements}</TableCell>
+                        <TableCell className="text-right">{player.expected_goals_conceded}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
