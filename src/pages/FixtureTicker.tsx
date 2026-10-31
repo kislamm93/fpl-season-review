@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TickerCell } from "@/types/ticker";
-import { fetchCurrentGameweek, fetchTicker } from "@/services/tickerService";
+import { fetchUpcomingGameweek, fetchTicker } from "@/services/tickerService";
 
 const WINDOW = 5; // gameweeks shown per page
 const MAX_GW = 38;
@@ -47,9 +47,9 @@ const FixtureTicker = () => {
   const [startGw, setStartGw] = useState<number>(1);
   const [initialized, setInitialized] = useState(false);
 
-  // start the window at the current/next gameweek
+  // start the window at the gameweek being picked for, not one already played
   useEffect(() => {
-    fetchCurrentGameweek().then((gw) => {
+    fetchUpcomingGameweek().then((gw) => {
       setStartGw(gw);
       setInitialized(true);
     });
