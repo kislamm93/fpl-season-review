@@ -1,8 +1,9 @@
-name: Deploy UI to GitHub Pages
+name: CI and deploy UI to GitHub Pages
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 # Permissions required by actions/deploy-pages.
@@ -17,7 +18,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        # `vite build` does NOT typecheck — esbuild strips types without
+        # reading them, so until now a type error built cleanly and shipped.
+        # This is the real gate on this repo.
+        run: npm run typecheck
+
+      - name: Lint
+        # Not blocking: there are 14 pre-existing errors in this repo (mostly
+        # `any` in src/types/fpl-api.ts, plus two in generated shadcn
+        # components). A gate that's red on arrival teaches people to ignore
+        # it, so lint reports here and the typecheck above is what blocks.
+        # Drop this line once those are cleared.
+        continue-on-error: true
+        run: npm run lint
+
   build:
+    needs: ci
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,11 +62,19 @@ jobs:
         env:
           # Render backend URL — set as a repo variable:
           # Settings → Secrets and variables → Actions → Variables → VITE_API_BASE
-          # e.g. https://fpl-backend.onrender.com  (no trailing slash)
+          # e.g. https://fpl-backend-xio6.onrender.com  (no trailing slash)
           VITE_API_BASE: ${{ vars.VITE_API_BASE }}
           # Project-page base path, e.g. /fpl-season-review/
           VITE_BASE: /${{ github.event.repository.name }}/
-        run: npm run build
+        run: |
+          if [ -z "$VITE_API_BASE" ]; then
+            echo "::error::VITE_API_BASE repo variable is not set — the built"
+            echo "::error::site would call the wrong host and every page would"
+            echo "::error::show no data. Set it under Settings -> Secrets and"
+            echo "::error::variables -> Actions -> Variables."
+            exit 1
+          fi
+          npm run build
 
       # SPA fallback: GitHub Pages serves 404.html for unknown paths, so a copy
       # of index.html makes deep links / refreshes work with client-side routing.
@@ -50,6 +87,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

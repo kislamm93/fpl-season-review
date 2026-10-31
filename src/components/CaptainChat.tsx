@@ -8,18 +8,43 @@ import { getChatUserId, newSessionId, streamChat } from "@/services/agentChat";
 interface Message {
   role: "user" | "assistant";
   text: string;
+  /** Tools the agent actually read, shown under the answer as provenance. */
+  tools?: string[];
+  /** Set when the name check couldn't verify a player it named. */
+  warning?: string | null;
 }
 
 const SUGGESTIONS = [
   "Who should I captain this week?",
-  "Give me a differential captain pick",
-  "Is the favourite worth captaining?",
+  "Best defence to back?",
+  "How am I doing in my league?",
+  "Who's in form right now?",
 ];
 
-const CaptainChat = () => {
+/** Tool name -> what to call it in the "read" footer. */
+const SOURCE_LABELS: Record<string, string> = {
+  goalscorer_odds: "goalscorer odds",
+  clean_sheet_odds: "clean-sheet odds",
+  match_odds: "match odds",
+  fixture_difficulty: "fixture difficulty",
+  players: "squad data",
+  player_detail: "player history",
+  manager: "manager history",
+  manager_squad: "your squad",
+  league: "league table",
+  current_gameweek: "gameweek",
+};
+
+interface CaptainChatProps {
+  /** What the user is looking at, so questions like "best here?" resolve. */
+  context?: string;
+}
+
+const CaptainChat = ({ context }: CaptainChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<string | null>(null);
   const sessionId = useRef<string>(newSessionId());
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -40,22 +65,29 @@ const CaptainChat = () => {
       { role: "assistant", text: "" },
     ]);
 
-    const appendToLast = (updater: (text: string) => string) =>
+    const setLast = (patch: Partial<Message>) =>
       setMessages((prev) => {
         const copy = [...prev];
-        const last = copy[copy.length - 1];
-        copy[copy.length - 1] = { ...last, text: updater(last.text) };
+        copy[copy.length - 1] = { ...copy[copy.length - 1], ...patch };
         return copy;
       });
 
     try {
-      await streamChat(question, getChatUserId(), sessionId.current, {
-        onDelta: (delta) => appendToLast((text) => text + delta),
-        onError: (msg) => appendToLast(() => `⚠️ ${msg}`),
-      });
+      await streamChat(
+        question,
+        getChatUserId(),
+        sessionId.current,
+        {
+          onProgress: (label) => setProgress(label),
+          onReply: (text, tools, warning) => setLast({ text, tools, warning }),
+          onError: (msg) => setLast({ text: `⚠️ ${msg}` }),
+        },
+        context,
+      );
     } catch (e) {
-      appendToLast(() => "⚠️ Something went wrong reaching the assistant.");
+      setLast({ text: "⚠️ Something went wrong reaching the assistant." });
     } finally {
+      setProgress(null);
       setBusy(false);
     }
   };
@@ -64,6 +96,7 @@ const CaptainChat = () => {
     if (busy) return;
     sessionId.current = newSessionId();
     setMessages([]);
+    setProgress(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -78,7 +111,7 @@ const CaptainChat = () => {
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Sparkles className="h-5 w-5 text-primary" />
-          Captaincy Assistant
+          FPL Analyst
         </CardTitle>
         {messages.length > 0 && (
           <Button variant="ghost" size="sm" onClick={resetChat} disabled={busy}>
@@ -93,7 +126,8 @@ const CaptainChat = () => {
             <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground gap-3">
               <Sparkles className="h-8 w-8 text-primary/60" />
               <p className="text-sm max-w-xs">
-                Ask about captaincy for the upcoming gameweek — powered by live odds and FPL data.
+                Ask about captaincy, transfers, fixtures or your mini-league — answered
+                from live odds and FPL data.
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {SUGGESTIONS.map((s) => (
@@ -113,14 +147,37 @@ const CaptainChat = () => {
                 key={i}
                 className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
               >
-                <div
-                  className={
-                    m.role === "user"
-                      ? "max-w-[85%] rounded-2xl rounded-br-sm bg-primary text-primary-foreground px-3 py-2 text-sm"
-                      : "max-w-[85%] rounded-2xl rounded-bl-sm bg-muted px-3 py-2 text-sm whitespace-pre-wrap"
-                  }
-                >
-                  {m.text || (busy && <Loader2 className="h-4 w-4 animate-spin" />)}
+                <div className="max-w-[85%] flex flex-col gap-1.5">
+                  <div
+                    className={
+                      m.role === "user"
+                        ? "rounded-2xl rounded-br-sm bg-primary text-primary-foreground px-3 py-2 text-sm"
+                        : "rounded-2xl rounded-bl-sm bg-muted px-3 py-2 text-sm whitespace-pre-wrap"
+                    }
+                  >
+                    {m.text || (
+                      /* The answer arrives in one piece once it's name-checked,
+                         so the wait shows what the agent is doing instead. */
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+                        {progress ?? "thinking"}…
+                      </span>
+                    )}
+                  </div>
+                  {m.warning && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400 px-1">
+                      {m.warning}
+                    </p>
+                  )}
+                  {!!m.tools?.length && (
+                    <p className="text-[11px] text-muted-foreground px-1">
+                      read:{" "}
+                      {m.tools
+                        .filter((t) => t !== "current_gameweek")
+                        .map((t) => SOURCE_LABELS[t] ?? t)
+                        .join(" · ")}
+                    </p>
+                  )}
                 </div>
               </div>
             ))
@@ -132,7 +189,7 @@ const CaptainChat = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about captaincy…"
+            placeholder="Ask anything about your FPL…"
             className="min-h-[2.5rem] max-h-32 resize-none"
             rows={1}
             disabled={busy}
