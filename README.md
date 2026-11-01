@@ -1,69 +1,73 @@
-# Welcome to your Lovable project
+# FPL Season Review
 
-## Project info
+Fantasy Premier League analytics in the browser: fixture difficulty, betting
+markets, mini-league standings, and a chat analyst that answers from live data
+rather than from memory.
 
-**URL**: https://lovable.dev/projects/8af06e34-c949-43b5-8253-55c0f8e37921
+Part of a three-service stack:
 
-## How can I edit this code?
+| Service | Repo | Runs on |
+| --- | --- | --- |
+| This UI | `fpl-season-review` | GitHub Pages |
+| API | `fpl-backend` | Render |
+| Agent | `fpl-agent-gcp` | Cloud Run (Gemini via Vertex AI) |
 
-There are several ways of editing your application.
+The browser only ever talks to the backend. The agent is reached through it, so
+no keys or agent URLs are in this bundle.
 
-**Use Lovable**
+## Pages
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8af06e34-c949-43b5-8253-55c0f8e37921) and start prompting.
+- **Fixture Ticker** — official FDR over a gameweek range, sortable easy to hard
+- **Market Odds** — win probability, anytime goalscorer odds, clean sheets, and
+  goals markets, with an on-demand refresh that spends betting-API credits
+- **My Team Stats / Compare Teams** — your squad against a rival's
+- **Mini-League Preview / League Details / Manager History** — standings and form
+- **Chat analyst** — sits beside Market Odds and knows which tab you are on, so
+  "who's the best differential here?" resolves without spelling it out
 
-Changes made via Lovable will be committed automatically to this repo.
+## Running it locally
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Requires Node 20.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm ci
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+That serves on `:8080` and expects the backend on `http://localhost:8000`. To
+point at the deployed backend instead, set `VITE_API_BASE`:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+VITE_API_BASE=https://fpl-backend-xio6.onrender.com npm run dev
+```
 
-**Use GitHub Codespaces**
+Other scripts:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```sh
+npm run typecheck   # tsc --noEmit — `vite build` does NOT typecheck
+npm run lint        # eslint
+npm run build       # production bundle into dist/
+npm run preview     # serve the built bundle
+```
 
-## What technologies are used for this project?
+`npm run typecheck` is worth knowing about: Vite strips types with esbuild
+without reading them, so a type error builds cleanly and ships. CI runs it as a
+blocking gate for that reason.
 
-This project is built with .
+## Deploying
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Push to `main`. `.github/workflows/deploy-ui.yml` typechecks, builds, and
+publishes to GitHub Pages.
 
-## How can I deploy this project?
+Two repo settings it depends on, under **Settings → Secrets and variables →
+Actions → Variables**:
 
-Simply open [Lovable](https://lovable.dev/projects/8af06e34-c949-43b5-8253-55c0f8e37921) and click on Share -> Publish.
+- `VITE_API_BASE` — the backend origin, no trailing slash. The build fails
+  loudly if it is unset rather than shipping a site that calls the wrong host.
 
-## I want to use a custom domain - is that possible?
+`VITE_BASE` is set by the workflow itself to `/<repo>/`, because a GitHub Pages
+project site is served from a subpath.
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Stack
+
+Vite · React 18 · TypeScript · Tailwind · shadcn/ui · TanStack Query · React Router
